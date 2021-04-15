@@ -1,0 +1,21 @@
+Package: sseReview
+Type: Package
+Title: The Title of the Project
+Version: 0.0.0.9000
+Authors@R: c(
+    person(given   = "Andrew",
+           family  = "Helmstetter",
+           role    = c("aut", "cre"),
+           email   = "andrew.j.helmstetter@gmail.com",
+           comment = c(ORCID = "0000-0003-3761-4981")))
+Description: A paragraph providing a full description of the project (on several 
+    lines...)
+URL: https://github.com/ajhelmstetter/sseReview
+BugReports: https://github.com/ajhelmstetter/sseReview/issues
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: 
+    devtools
