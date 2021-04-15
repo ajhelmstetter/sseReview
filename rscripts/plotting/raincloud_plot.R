@@ -2,7 +2,7 @@
 # Effect of data characteristics on inference of div rate change
 ###
 
-setwd("~/Dropbox/projects/AJH_DiveRS/sse_review/plots/")
+setwd("~/Dropbox/projects/AJH_DiveRS/sseReview/figures/")
 
 # Library
 library(viridis)
@@ -12,7 +12,7 @@ library(ggplot2)
 
 #read in full data frame
 df <-
-  read.csv("~/Dropbox/projects/AJH_DiveRS/sse_review/sse_review_table - main_table.csv")
+  read.csv("~/Dropbox/projects/AJH_DiveRS/sseReview/data/sse_review_table - main_table.csv")
 
 #read in flat violin plot code
 source(

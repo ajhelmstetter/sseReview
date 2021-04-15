@@ -11,7 +11,7 @@ Check](https://github.com/ajhelmstetter/sseReview/actions/workflows/R-CMD-check.
 [![Dependencies](https://img.shields.io/badge/dependencies-0/0-brightgreen?style=flat)](#)
 <!-- badges: end -->
 
-Research Compendium of the project **{{ PLEASE ADD A FEW WORDS }}**
+Research Compendium of the project **DiveRS -SSE review**
 
 ### How to cite
 
@@ -64,3 +64,21 @@ Clone the repository, open the `.Rproj` file in RStudio and run:
     installed (if necessary)
 -   All required packages and R functions will be loaded
 -   Some analyses listed in the `make.R` might take time
+
+### Plots
+
+![](figures/stacked_barplot_models.pdf)
+
+![](figures/ridgeplot_tips_year.pdf)
+
+![](figures/ridgeplot_tips_model.pdf)
+
+![](figures/treemap_orders.pdf)
+
+![](figures/treemap_traits.pdf)
+
+![](figures/raincloud_tips.pdf)
+
+![](figures/densities.pdf)
+
+![](figures/scatterplot_sampling_tips.pdf)

@@ -2,7 +2,7 @@
 # Effect of data characteristics on inference of div rate change
 ###
 
-setwd("~/Dropbox/projects/AJH_DiveRS/sseReview/figures/")
+setwd("~/Dropbox/projects/AJH_DiveRS/sseReview/rscripts/")
 
 # Library
 library(viridis)
@@ -122,7 +122,8 @@ df3$tip_bias <- top_df$samples_per_state / bot_df$samples_per_state
 theme_set(my_theme)
 
 #tips
-p1 <- ggplot(df3, aes(log(tips), fill = div_inc, colour = div_inc)) +
+p1 <-
+  ggplot(df3, aes(log(tips), fill = div_inc, colour = div_inc)) +
   geom_density(alpha = 0.5, color = NA) +
   scale_x_continuous(name = "Number of tips (log)") +
   scale_y_continuous(expand = c(0, 0)) +
@@ -157,7 +158,10 @@ p5 <-
 #arrange plots
 p1 | p2 / p3 | p4 / p5
 
-ggsave("densities.pdf",width=20,height=12,units='cm')
+ggsave("densities.pdf",
+       width = 20,
+       height = 12,
+       units = 'cm')
 
 ###
 # ridgeplots
@@ -187,7 +191,12 @@ ggplot(df4, aes(
   scale_x_continuous(name = "Number of tips (log)") +
   theme(legend.position = "none", axis.title.y = element_blank())
 
-ggsave("ridgeplot_tips_model.pdf",width=20,height=12,units='cm')
+ggsave(
+  "ridgeplot_tips_model.pdf",
+  width = 20,
+  height = 12,
+  units = 'cm'
+)
 
 #remove years where density cant be calculated
 df5 <- df3 %>% filter(!grepl("2010", year))
@@ -207,7 +216,12 @@ ggplot(df5, aes(
   scale_y_discrete(name = "Publication year") +
   theme(legend.position = "none")
 
-ggsave("ridgeplot_tips_year.pdf",width=20,height=12,units='cm')
+ggsave(
+  "ridgeplot_tips_year.pdf",
+  width = 20,
+  height = 12,
+  units = 'cm'
+)
 
 ###
 # scatterplots
@@ -232,4 +246,9 @@ ggplot(df3, aes(x = perc_sampling, y = log(tips), color = div_inc)) +
     panel.grid.major = element_line()
   )
 
-ggsave("scatterplot_sampling_tips.pdf",width=20,height=12,units='cm')
+ggsave(
+  "scatterplot_sampling_tips.pdf",
+  width = 20,
+  height = 12,
+  units = 'cm'
+)

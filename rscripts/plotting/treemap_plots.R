@@ -2,7 +2,7 @@
 # Taxonomic diversity in SSE models
 ###
 
-setwd("~/Dropbox/projects/AJH_DiveRS/sse_review/plots/")
+setwd("~/Dropbox/projects/AJH_DiveRS/sseReview/figures/")
 
 #Library
 library(tidyverse)
@@ -12,7 +12,7 @@ library(RColorBrewer)
 
 #read in full data frame
 df <-
-  read.csv("~/Dropbox/projects/AJH_DiveRS/sse_review/sse_review_table - main_table.csv")
+  read.csv("~/Dropbox/projects/AJH_DiveRS/sseReview/data/sse_review_table - main_table.csv")
 
 #choose the columns you want in model (plus study/model_no for formatting)
 df <-
@@ -53,7 +53,11 @@ ggplot(ord_freq, aes(area = freq, fill = order, label=order)) +
   theme(legend.position = "none") +
   scale_fill_manual(values = mycolors)
 
-ggsave("treemap_orders.pdf")
+ggsave("treemap_orders.pdf",
+       width = 20,
+       height = 12,
+       units = 'cm'
+)
 
 ###
 # Trait type diversity in SSE models
@@ -84,4 +88,8 @@ ggplot(ord_freq, aes(area = freq, fill = trait_type_1, label=trait_type_1)) +
   theme(legend.position = "none") +
   scale_fill_manual(values = mycolors)
 
-ggsave("treemap_traits.pdf")
+ggsave("treemap_traits.pdf",
+       width = 20,
+       height = 12,
+       units = 'cm'
+)

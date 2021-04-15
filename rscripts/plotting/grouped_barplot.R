@@ -2,20 +2,20 @@
 # Taxonomic diversity in SSE models
 ###
 
-setwd("~/Dropbox/projects/AJH_DiveRS/sse_review/plots/")
+setwd("~/Dropbox/projects/AJH_DiveRS/sseReview/figures/")
 
 #Library
 library(tidyverse)
 library(ggplot2)
 library(RColorBrewer)
-library("dplyr")
+library(dplyr)
 
 #theme
 
 
 #read in full data frame
 df <-
-  read.csv("~/Dropbox/projects/AJH_DiveRS/sse_review/sse_review_table - main_table.csv")
+  read.csv("~/Dropbox/projects/AJH_DiveRS/sseReview/data/sse_review_table - main_table.csv")
 
 #choose the columns you want in model (plus study/model_no for formatting)
 df <-
@@ -74,9 +74,9 @@ df2$x<-as.character(df2$x)
 df2<-rbind(df2,mc)
 
 
-ggplot(df2, aes(fill=x, y=count, x=reorder(Group.3, -count))) + 
-  geom_bar(position="dodge", stat="identity") + 
-  scale_x_discrete(name ="Trait category") + 
+ggplot(df2, aes(fill=x, y=count, x=reorder(Group.3, -count))) +
+  geom_bar(position="dodge", stat="identity") +
+  scale_x_discrete(name ="Trait category") +
   scale_y_continuous(expand = c(0, 0),
                      limits=c(0,50),
                      name ="Count") +
@@ -93,4 +93,9 @@ ggplot(df2, aes(fill=x, y=count, x=reorder(Group.3, -count))) +
         legend.position = c(0.89,0.91),
         legend.background = element_blank())
 
-ggsave("~/Dropbox/projects/AJH_DiveRS/sse_review/plots/grouped_barplot_traits.pdf")
+ggsave(
+  "~/Dropbox/projects/AJH_DiveRS/sseReview/figures/grouped_barplot_traits.pdf",
+  width = 20,
+  height = 12,
+  units = 'cm'
+)
