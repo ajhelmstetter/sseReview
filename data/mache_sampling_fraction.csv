@@ -1,0 +1,147 @@
+"","sampling"
+"Alcantara_et_al_2018_Accelerated_diversification_and_functional_trait_e.txt",NA
+"Aliscioni_et_al_2012_New_grass_phylogeny_resolves_deep_evolutionary_rel.txt","m"
+"Anacker_et_al_2011_Origins_and_consequences_of_serpentine_endemism_in.txt","m"
+"Andriananjamanantsoa_et_al_2016_Diversification_of_angraecum_Orchidaceae_Vandeae.txt",NA
+"Antonelli_et_al_2015_An_engine_for_global_plant_diversity_Highest_evol.txt",NA
+"Areces_Berazain_and_Ackerman_2017_Diversification_and_fruit_evolution_in_eumalvoids.txt","we created a separate file (the ‘sample_probs.txt’ file), in which we assigned sampling fractions to the species of each of the three tribes (0.15 for hibisceae, 0.50 for gossypieae and 0.11 for malveae). for fruit type, these sampling fractions were estimated as: 25% of species with capsular fruit (state 0) and 2.4% with schizocarpic fruits (state 1) for hibisceae; 50% of species of gossypieae (all with capsules); and 11% of species of malveae (all with schizocarps). for carpel number the sampling fractions were: 15% of species with five-carpellat ..."
+"Armbruster_et_al_2009_Macroevolutionary_patterns_of_defense_and_pollinat.txt","although taxon sampling involved less armbruster et al. than 70% of the species"
+"Azani_et_al_2019_Miocene_climate_change_as_a_driving_force_for_mult.txt",NA
+"Bacon_et_al_2018_Iriarteeae_palms_tracked_the_uplift_of_Andean_Cord.txt","m"
+"Bardon_et_al_2013_Origin_and_evolution_of_Chrysobalanaceae_Insights.txt","m"
+"Beaulieu_and_Donoghue_2013_Fruit_evolution_and_diversification_in_campanulid.txt","m"
+"Beaulieu_and_OMeara_2016_Detecting_hidden_diversification_shifts_in_models.txt",NA
+"Blanco_Pastor_and_Vargas_2013_Autecological_traits_determined_two_evolutionary_s.txt","m"
+"Bouchenak_Khelladi_and_Linder_2017_Frequent_and_parallel_habitat_transitions_as_drive.txt","m"
+"Bouchenak_Khelladi_et_al_2014_A_revised_evolutionary_history_of_Poales_Origins.txt","sampling.f (proportion of taxa included in the phylogenetic analysis; ∼3%), which is a function that incorporates the known number of missing species. missing species need to be assigned to a particular state for each coded trait..."
+"Bouchenak_Khelladi_et_al_2014_Diversification_of_C4_grasses_Poaceae_does_not_c.txt","ampling was incomplete, the bisse calculations were corrected using an implemented sampling fraction argument (sampling.f), for which a sampling fraction for each state was incorporated (i.e., number of c3 and c4 species included over the total number of extant c3 and c4 species in the pacmad 302 american journal of botany [vol. 101 february 2014] bouchenak-khelladi et al.—c4 grass diversity and ecological dominance clade; 30% and 10% for c3"
+"Bouchenak_Khelladi_et_al_2015_On_the_complexity_of_triggering_evolutionary_radia.txt",NA
+"Bromham_et_al_2016_Detecting_Macroevolutionary_Self_Destruction_from.txt","we derived sampling fraction (the estimated proportion of taxa included in the phylogeny) from the published study."
+"Bruun_Lund_et_al_2018_Rush_hour_at_the_Museum_–_Diversification_patterns.txt","supplementary data ﬁle s1"
+"Bruy_et_al_2018_Evolution_of_plant_architecture_functional_divers.txt","m"
+"Buerki_et_al_2012_Contrasting_biogeographic_and_diversification_patt.txt","fig. s1"
+"Buerki_et_al_2013_Spatio_temporal_history_of_the_disjunct_family_Tec.txt","m"
+"Caetano_et_al_2018_Hidden_state_models_improve_state_dependent_divers.txt","m"
+"Canal_et_al_2019_Out_of_Amazonia_and_Back_Again_Historical_Biogeog.txt","our taxon sampling includes six of 21 species accepted in subgenus meconostigma, 144 of ;460 species of subgenus philodendron, and 23 of 82 species of subgenus pteromischum..  we specified the fraction of missing species of philodendron under the assumption of random taxon sampling (fitzjohn et al., 2009). the sampling fraction was calculated as a ratio of the number of species included divided by the total number of species estimated for each region: a 5 53/280, b 5 65/180, and ab 5 43/90."
+"Cano_et_al_2018_The_roles_of_dispersal_and_mass_extinction_in_shap.txt","m"
+"Cánovas_et_al_2011_Driving_south_A_multi_gene_phylogeny_of_the_brown.txt","m"
+"Cardillo_and_Pratt_2013_Evolution_of_a_hotspot_genus_Geographic_variation.txt","m"
+"Cássia_Silva_et_al_2019_Niche_conservatism_drives_a_global_discrepancy_in.txt","m"
+"Castillo_et_al_2016_Assortative_mating_and_self_fertilization_differ_i.txt",NA
+"Chauveau_et_al_2012_Oil_producing_flowers_within_the_Iridoideae_Irida.txt",NA
+"Condamine_et_al_2017_Ancient_islands_acted_as_refugia_and_pumps_for_con.txt","increases the ratio to 16.4% (63/384), and to 19.2% (58/302)"
+"Couvreur_et_al_2014_Global_diversification_o_f_a_tropical_plant_growth.txt",NA
+"Day_et_al_2016_Is_specialization_an_evolutionary_dead_end_Testin.txt",NA
+"De_Casas_et_al_2016_The_influence_of_habitat_on_the_evolution_of_plant.txt",NA
+"de_Vos_et_al_2014_Heterostyly_accelerates_diversification_via_reduce.txt","we sampled 265 out of ca 730 species of primulaceae"
+"Drummond_et_al_2012_Multiple_continental_radiations_and_correlates_of.txt",NA
+"Duan_et_al_2018_Evolution_of_sexual_systems_and_growth_habit_in_Mu.txt","m"
+"Ebersbach_et_al_2017_Evolutionary_radiations_in_the_species_rich_mounta.txt","additional file 6"
+"Estep_et_al_2014_Allopolyploidy_diversification_and_the_Miocene_g.txt","assuming a sampling fraction of 8%"
+"Feldberg_et_al_2014_Epiphytic_leafy_liverworts_diversified_in_angiospe.txt","m"
+"Fernández_Mazuecos_et_al_2013_Corolla_morphology_influences_diversification_rate.txt","m"
+"Fernández_Mazuecos_et_al_2019_Macroevolutionary_dynamics_of_nectar_spurs_a_key.txt","incomplete sampling was accounted for by including state-specific sampling fractions according to each taxonomic treatment"
+"Folk_and_Freudenstein_2014_Phylogenetic_relationships_and_character_evolution.txt","m"
+"Forest_et_al_2014_Pollinator_shifts_as_triggers_of_speciation_in_pai.txt","m"
+"Frenzke_et_al_2016_Evolution_of_epiphytism_and_fruit_traits_act_uneve.txt",NA
+"Freudenstein_and_Chase_2015_Phylogenetic_relationships_in_Epidendroideae_Orch.txt","m"
+"Freyman_and_Höhna_2019_Stochastic_character_mapping_of_state_dependent_di.txt","he species sampling fraction of extant onagraceae species was thus  = 292/650 = 0.45"
+"Gamisch_et_al_2015_Multiple_independent_origins_of_auto_pollination_i.txt","m"
+"Givnish_et_al_2014_Adaptive_radiation_correlated_and_contingent_evol.txt","m"
+"Givnish_et_al_2016_Orchid_historical_biogeography_diversification_A.txt","m"
+"Goldberg_and_Igic_2012_Tempo_and_mode_in_plant_breeding_system_evolution.txt","assuming uniform sampling effort across the tree within each character state, the probability of a species being included in the analysis was 0.163 for si species and 0.150 for sc species"
+"Goldberg_et_al_2010_Species_selection_maintains_self_incompatibility.txt","we include the correction for incomplete sampling (s18): the probability of being sampled in the tree is 0.162 for si species and 0.150 for sc species."
+"Goldberg_et_al_2011_Phylogenetic_inference_of_reciprocal_effects_betwe.txt","m"
+"Goldberg_et_al_2017_Macroevolutionary_synthesis_of_flowering_plant_sex.txt",NA
+"Han_et_al_2020_Polyploidy_promotes_species_diversification_of_All.txt","m"
+"Hanschen_et_al_2018_Repeated_evolution_and_reversibility_of_self_ferti.txt","herefore, we did not include a correction 407 for incomplete sampling of each state.our taxon sampling of described 535 species is relatively complete (69 of 79 species, 87%)"
+"Hernández_Hernández_et_al_2014_Beyond_aridification_Multiple_explanations_for_th.txt","m"
+"Herrera_Alsina_et_al_2019_Detecting_the_Dependence_of_Diversification_on_Mul.txt",NA
+"Hipp_et_al_2018_Sympatric_parallel_diversification_of_major_oak_cl.txt","m"
+"Horn_et_al_2014_Evolutionary_bursts_in_Euphorbia_Euphorbiaceae_a.txt",NA
+"Howard_et_al_2020_Geophytism_in_monocots_leads_to_higher_rates_of_di.txt","m"
+"Igea_and_Tanentzap_2020_Angiosperm_speciation_cools_down_in_the_tropics.txt",NA
+"Jansson_et_al_2013_What_can_multiple_phylogenies_say_about_the_latitu.txt","m"
+"Johnson_et_al_2011_Loss_of_sexual_recombination_and_segregation_is_as.txt","because there are 43 asexual species, only 29 of which are represented on the tree, the skeletal tree method weights each pth tip species by its probability of being sampled, given its state, set to the sampling fraction 29/43. similarly, the sampling fraction for sexual species is 84 of 219"
+"Johnson_et_al_2013_Ancestral_deceit_and_labile_evolution_of_nectar_pr.txt",NA
+"Kadereit_et_al_2012_A_broader_model_for_C4_photosynthesis_evolution_in.txt","m"
+"Kergoat_et_al_2018_Opposite_macroevolutionary_responses_to_environmen.txt","m"
+"Koenen_et_al_2015_Recently_evolved_diversity_and_convergent_radiatio.txt",NA
+"Kong_et_al_2017_Both_temperature_fluctuations_and_East_Asian_monso.txt","m"
+"Kostikova_et_al_2014_The_role_of_climatic_tolerances_and_seed_traits_in.txt","we accounted for incomplete taxon sampling by specifying a sampling fraction for each continuous trait: 0.2 (seed size), 0.065 (dormancy and dispersal), and 0.4 (niche breadth)"
+"Laenen_et_al_2016_Increased_diversification_rates_follow_shifts_to_b.txt","by using a sampling fraction that was informed by the global proportion of unisexual and bisexual species. thus, 205 unisexual and 58 bisexual species sampled represented 5.9% and 4.3% of the 3426 and 1339 unisexual and bisexual species, respectively (table s1)."
+"Lagomarsino_et_al_2016_The_abiotic_and_biotic_drivers_of_rapid_diversific.txt","we accounted for incomplete taxon sampling by applying cladespecific sampling fractions in each of the three principal andean bellflower subclades: the chilean lobelias (1.0), lysipomia (0.12), and the centropogonids (0.35)."
+"Lagomarsino_et_al_2017_Repeated_evolution_of_vertebrate_pollination_syndr.txt","m"
+"Lancaster_and_Kay_2013_Origin_and_diversification_of_the_California_flora.txt","sampling probabilities/frequencies for each character state are presented in table"
+"Landis_et_al_2018_Evolution_of_floral_traits_and_impact_of_reproduct.txt","m"
+"Landis_et_al_2018_Impact_of_whole_genome_duplication_events_on_diver.txt","m"
+"Larson_Johnson_2016_Phylogenetic_investigation_of_the_complex_evolutio.txt","m"
+"Leslie_et_al_2013_Explaining_the_distribution_of_breeding_and_disper.txt",NA
+"Lin_et_al_2015_Range_expansion_and_habitat_shift_triggered_elevat.txt","m"
+"Linder_and_Bouchenak_Khelladi_2015_The_causes_of_southern_African_spatial_patterns_in.txt","m"
+"Linder_and_Bouchenak_Khelladi_2017_Adaptive_radiations_should_not_be_simplified_The.txt","we assigned a sampling fraction of 0.86"
+"Litsios_et_al_2014_Effects_of_a_fire_response_trait_on_diversificatio.txt","this accounted for the fact that we only had a full sampling (trait + phylogeny) of 75 australian and 200 south african species out of respectively 146 and 350."
+"Liu_et_al_2012_The_Evolutionary_Dynamics_of_Apomixis_in_Ferns_A.txt",NA
+"Machado_et_al_2018_Atlantic_forests_to_the_all_Americas_Biogeographi.txt","m"
+"Mandáková_et_al_2017_Multispeed_genome_diploidization_and_diversificati.txt","corresponding global sampling fraction of ~45%"
+"Marcussen_and_Meseguer_2017_Species_level_phylogeny_fruit_evolution_and_diver.txt","we accounted for incomplete taxon sampling by specifying the number of species sampled per character state in both bisse and musse analyses"
+"Matuszak_et_al_2016_Key_innovations_and_climatic_niche_divergence_as_d.txt","m"
+"Mayrose_et_al_2011_Recently_formed_polyploid_plants_diversify_at_lowe.txt","we ran diversitree under the complete sampling assumption"
+"Mcdaniel_et_al_2013_Recurrent_evolution_of_dioecy_in_bryophytes.txt","we have only ∼5% of the total extant species in our tree"
+"Meseguer_et_al_2015_Integrating_fossils_phylogenies_and_niche_models.txt",NA
+"Moharrek_et_al_2019_Morphological_innovations_and_vast_extensions_of_m.txt","to account for incomplete taxon sampling, we specified a global sampling probability of 0.65"
+"Nakov_et_al_2019_Diatoms_diversify_and_turn_over_faster_in_freshwat.txt","we estimated sampling fractions for each environment. we repeated the marine–freshwater analysis with arbitrarily reduced marine sampling fractions, from the observed value of 21% down"
+"Neupane_et_al_2017_Evolution_of_woody_life_form_on_tropical_mountains.txt",NA
+"Ng_and_Smith_2018_Why_are_red_flowers_so_rare_Testing_the_macroevol.txt","we implemented hisse using the ‘skeleton tree’ approach to account for incomplete sampling in the phylogeny, by specifying that 100% redflowered and 46% non-red-flowered taxa were sampled"
+"Ogutcen_et_al_2014_Diversification_in_Monkeyflowers_An_Investigation.txt","m"
+"Ogutcen_et_al_2017_Diversification_rates_in_Antirrhineae_Plantaginac.txt","in order to account for incomplete taxon sampling, we set the global sampling fraction to 0.61 (146 out of 240 species in antirrhineae)."
+"OMeara_et_al_2016_Non_equilibrium_dynamics_and_floral_trait_interact.txt",NA
+"Onstein_and_Linder_2016_Beyond_climate_Convergence_in_fast_evolving_scler.txt","m"
+"Onstein_et_al_2014_Diversification_rate_shifts_in_the_Cape_Floristic.txt",NA
+"Onstein_et_al_2015_Do_Mediterranean_type_ecosystems_have_a_common_his.txt","m"
+"Onstein_et_al_2016_Evolutionary_radiations_of_Proteaceae_are_triggere.txt","sampling by specifying a sampling fraction for each trait (appendix s5)"
+"Onstein_et_al_2017_Frugivory_related_traits_promote_speciation_of_tro.txt","bisse enables correcting for species and their traits 369 not sampled in the datasets by indicating a sampling fraction, i.e. 32% of small-fruited and 18% of 370 large-fruited palm species were not sampled in the global dataset."
+"Onstein_et_al_2018_To_adapt_or_go_extinct_The_fate_of_megafaunal_pal.txt","m"
+"Otero_et_al_2019_Being_in_the_right_place_at_the_right_time_Parall.txt","m"
+"Pérez_Escobar_et_al_2017_Recent_origin_and_rapid_speciation_of_Neotropical.txt","incomplete taxon sampling was accounted for by assigning a sampling fraction of 25% of the extant orchid diversity of cymbidieae, and 13% of pleurothallidinae (sampling fractions of every genus sampled were incorporated according to chase et al., 2015)."
+"Pichardo_Marcano_et_al_2019_Phylogeny_historical_biogeography_and_diversifica.txt","m"
+"Pirie_et_al_2016_The_biodiversity_hotspot_as_evolutionary_hot_bed.txt","corrected for incomplete sampling by assigning regionspecific sampling fractions."
+"Reyes_et_al_2015_Presence_in_Mediterranean_hotspots_and_floral_symm.txt","m"
+"Roalson_and_Roberts_2016_Distinct_processes_drive_diversification_in_differ.txt","sampling schemes were based on the proportion of coded states for each character present in the sampled taxa. for example, if the coded characters were 40% ornithophilous and 60% non-ornithophilous, we used values of 0.4 and 0.6 for the incomplete sampling scheme"
+"Román_Palacios_et_al_2019_Polyploidy_increases_overall_diversity_despite_hig.txt","we specified the following sampling fraction in both bisse and hisse models based on the ploidy database generated using chromevol: diploid=0.499, polyploid=0.501 (appendix si, table s2)."
+"Sabath_et_al_2016_Dioecy_does_not_consistently_accelerate_or_slow_li.txt","table s2"
+"Salariato_et_al_2016_Diversification_patterns_in_the_CES_clade_Brassic.txt","accounting for 19% missing taxa (15 /80 species)."
+"Salazar_Tortosa_et_al_2019_The_evolution_of_seed_dispersal_is_associated_with.txt","m"
+"Sánchez_Baracaldo_and_Thomas_2014_Adaptation_and_convergent_evolution_within_the_Jam.txt","m"
+"Schneider_et_al_2013_Exploring_the_origin_of_the_latitudinal_diversity.txt","m"
+"Schnitzler_et_al_2011_Causes_of_plant_diversification_in_the_cape_biodiv.txt","this simulation accommodates incomplete taxon sampling by first generating phylogenetic trees consisting of the number of species described for each group following a yule process, and subsequently sampling these trees to reconstruct phylogenies containing the same number of taxa as included in our data sets."
+"Schwery_et_al_2015_As_old_as_the_mountains_The_radiations_of_the_Eri.txt","nonrandom incomplete taxon sampling by specifying sampling fractions for all tribes separately (the taxonomy and species numbers are given in tables s2 and s3)."
+"Serrano_Serrano_et_al_2017_Hummingbird_pollination_and_the_diversification_of.txt","m"
+"Silvestro_et_al_2014_Disentangling_the_effects_of_key_innovations_on_th.txt","was applied to correct for incomplete taxon sampling, assuming random sampling associated to each character state, using the sampling fractions indicated above."
+"Skeels_and_Cardillo_2019_Equilibrium_and_non_equilibrium_phases_in_the_radi.txt","m"
+"Slovák_et_al_2018_Diversification_dynamics_and_transoceanic_Eurasian.txt","m"
+"Smith_and_Goldberg_2015_Tempo_and_mode_of_flower_color_evolution.txt","m"
+"Soltis_et_al_2013_Phylogenetic_relationships_and_character_evolution.txt","m"
+"Soltis_et_al_2014_Are_polyploids_really_evolutionary_dead_ends_agai.txt","m"
+"Spriggs_et_al_2014_C4_photosynthesis_promoted_species_diversification.txt","m"
+"Spriggs_et_al_2015_Temperate_radiations_and_dying_embers_of_a_tropica.txt","m"
+"Staggemeier_et_al_2015_Phylogenetic_analysis_in_Myrcia_section_Aulomyrcia.txt",NA
+"Sundue_et_al_2015_Morphological_innovation_ecological_opportunity.txt","table s3"
+"Toon_et_al_2014_Evolutionary_consequences_of_shifts_to_bird_pollin.txt",NA
+"Tripp_and_Tsai_2017_Disentangling_geographical_biotic_and_abiotic_dr.txt","m"
+"Uzma_et_al_2019_Timing_and_ecological_priority_shaped_the_diversif.txt","m"
+"Valente_et_al_2010_Diversification_of_the_African_genus_Protea_Prote.txt","m"
+"Valente_et_al_2011_Explaining_disparities_in_species_richness_between.txt",NA
+"Valente_et_al_2012_Did_pollination_shifts_drive_diversification_in_so.txt",NA
+"Verdú_and_Pausas_2013_Syndrome_driven_diversification_in_a_mediterranean.txt","m"
+"Verstraete_et_al_2017_Non_nodulated_bacterial_leaf_symbiosis_promotes_th.txt","table s2"
+"Villarreal_and_Renner_2013_Correlates_of_monoicy_and_dioicy_in_hornworts_the.txt","m"
+"Vincenzo_et_al_2018_Evolutionary_diversification_of_the_African_achyra.txt","to allow the application of a global sampling fraction for sse models to correct for incomplete taxon sampling (table 1"
+"Weber_and_Agrawal_2014_Defense_mutualisms_enhance_plant_diversification.txt","we accounted for incomplete sampling in each clade according to diversity estimates from publications (10, 23–26, 57)."
+"Wessinger_et_al_2019_Adaptation_to_hummingbird_pollination_is_associate.txt","m"
+"Williams_et_al_2014_Repeated_evolution_of_tricellular_(and_bicellular).txt","we re-estimated evolutionary rates over a variety of potentially true frequencies of bicellular pollen, ranging from 60 to 80%. since we had >>300 taxa and each character state had a frequency >10%"
+"Willis_et_al_2014_Diversification_and_the_evolution_of_dispersal_abi.txt","m"
+"Willis_et_al_2014_The_evolution_of_seed_dormancy_Environmental_cues.txt",NA
+"Xue_et_al_2020_Accelerated_diversification_correlated_with_functi.txt","habit 0 = tree or shrub (686/1866) 1 = liana (149/544)"
+"Yan_et_al_2018_What_explains_high_plant_richness_in_East_Asia_Ti.txt","table2"
+"Zenil_Ferguson_et_al_2019_Interaction_among_ploidy_breeding_system_and_line.txt","we accounted for incomplete sampling in all analyses by setting the probability of sampling a species at the present to 651/3000"
