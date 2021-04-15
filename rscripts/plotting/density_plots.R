@@ -2,7 +2,7 @@
 # Effect of data characteristics on inference of div rate change
 ###
 
-setwd("~/Dropbox/projects/AJH_DiveRS/sseReview/rscripts/")
+setwd("~/Dropbox/projects/AJH_DiveRS/sseReview/figures/")
 
 # Library
 library(viridis)
@@ -158,7 +158,7 @@ p5 <-
 #arrange plots
 p1 | p2 / p3 | p4 / p5
 
-ggsave("densities.pdf",
+ggsave("densities.png",
        width = 20,
        height = 12,
        units = 'cm')
@@ -192,7 +192,7 @@ ggplot(df4, aes(
   theme(legend.position = "none", axis.title.y = element_blank())
 
 ggsave(
-  "ridgeplot_tips_model.pdf",
+  "ridgeplot_tips_model.png",
   width = 20,
   height = 12,
   units = 'cm'
@@ -217,7 +217,7 @@ ggplot(df5, aes(
   theme(legend.position = "none")
 
 ggsave(
-  "ridgeplot_tips_year.pdf",
+  "ridgeplot_tips_year.png",
   width = 20,
   height = 12,
   units = 'cm'
@@ -247,7 +247,7 @@ ggplot(df3, aes(x = perc_sampling, y = log(tips), color = div_inc)) +
   )
 
 ggsave(
-  "scatterplot_sampling_tips.pdf",
+  "scatterplot_sampling_tips.png",
   width = 20,
   height = 12,
   units = 'cm'

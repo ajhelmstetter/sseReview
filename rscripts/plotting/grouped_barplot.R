@@ -94,7 +94,7 @@ ggplot(df2, aes(fill=x, y=count, x=reorder(Group.3, -count))) +
         legend.background = element_blank())
 
 ggsave(
-  "~/Dropbox/projects/AJH_DiveRS/sseReview/figures/grouped_barplot_traits.pdf",
+  "~/Dropbox/projects/AJH_DiveRS/sseReview/figures/grouped_barplot_traits.png",
   width = 20,
   height = 12,
   units = 'cm'

@@ -109,7 +109,7 @@ ggplot(ym, aes(y = n, x = year)) +
 
 # variable widths not possible in ggplot2 without geom_rect() craziness
 ggsave(
-  "stacked_barplot_models.pdf",
+  "stacked_barplot_models.png",
   width = 20,
   height = 12,
   units = 'cm'

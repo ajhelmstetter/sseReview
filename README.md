@@ -1,3 +1,4 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # sseReview
@@ -56,7 +57,9 @@ This repository is structured as follow:
 
 Clone the repository, open the `.Rproj` file in RStudio and run:
 
-    source("make.R")
+``` r
+source("make.R")
+```
 
 ### Notes
 
@@ -67,18 +70,18 @@ Clone the repository, open the `.Rproj` file in RStudio and run:
 
 ### Plots
 
-![](figures/stacked_barplot_models.pdf)
+![](figures/stacked_barplot_models.png)
 
-![](figures/ridgeplot_tips_year.pdf)
+![](figures/ridgeplot_tips_year.png)
 
-![](figures/ridgeplot_tips_model.pdf)
+![](figures/ridgeplot_tips_model.png)
 
-![](figures/treemap_orders.pdf)
+![](figures/treemap_orders.png)
 
-![](figures/treemap_traits.pdf)
+![](figures/treemap_traits.png)
 
-![](figures/raincloud_tips.pdf)
+![](figures/raincloud_tips.png)
 
-![](figures/densities.pdf)
+![](figures/densities.png)
 
-![](figures/scatterplot_sampling_tips.pdf)
+![](figures/scatterplot_sampling_tips.png)

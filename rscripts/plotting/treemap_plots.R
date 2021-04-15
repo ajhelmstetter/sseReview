@@ -53,7 +53,7 @@ ggplot(ord_freq, aes(area = freq, fill = order, label=order)) +
   theme(legend.position = "none") +
   scale_fill_manual(values = mycolors)
 
-ggsave("treemap_orders.pdf",
+ggsave("treemap_orders.png",
        width = 20,
        height = 12,
        units = 'cm'
@@ -88,7 +88,7 @@ ggplot(ord_freq, aes(area = freq, fill = trait_type_1, label=trait_type_1)) +
   theme(legend.position = "none") +
   scale_fill_manual(values = mycolors)
 
-ggsave("treemap_traits.pdf",
+ggsave("treemap_traits.png",
        width = 20,
        height = 12,
        units = 'cm'

@@ -151,7 +151,7 @@ g <-
 #plot
 g
 
-ggsave("raincloud_tips.pdf")
+ggsave("raincloud_tips.png")
 
 ###
 # Overlapping density plots
