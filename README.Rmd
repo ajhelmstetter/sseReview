@@ -108,7 +108,7 @@ Figure 5. Treemap of the trait types considered in angiosperm-based studies usin
 Figure 6. Raincloud plots of distributions of the number of tips in the phylogenetic trees in studies that infer the an effect of the investigated trait (pink) or infer no effect (green). On average more tips are found in studies that find an association.
 
 ![](figures/densities.png) 
-Figure 6. Paired density plots of distributions of various factors in studies that infer the an effect of the investigated trait (yellow) or infer no effect (grey). Older trees and those with lower sampling fraction more often yield significant associations.
+Figure 7. Paired density plots of distributions of various factors in studies that infer the an effect of the investigated trait (yellow) or infer no effect (grey). Older trees and those with lower sampling fraction more often yield significant associations.
 
 ![](figures/scatterplot_sampling_tips.png)
-Figure 7. Scatterplot of sampling fraction against number of tips with fitted lines. Points and lines coloured by whether there was a significant association (yellow) or not (grey) between the traits and diversification rates. An almost flat relationship observed between sampling fraction and number of tips, and no effect between trait significance.
+Figure 8. Scatterplot of sampling fraction against number of tips with fitted lines. Points and lines coloured by whether there was a significant association (yellow) or not (grey) between the traits and diversification rates. An almost flat relationship observed between sampling fraction and number of tips, and no effect between trait significance.

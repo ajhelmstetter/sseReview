@@ -101,13 +101,13 @@ that infer the an effect of the investigated trait (pink) or infer no
 effect (green). On average more tips are found in studies that find an
 association.
 
-![](figures/densities.png) Figure 6. Paired density plots of
+![](figures/densities.png) Figure 7. Paired density plots of
 distributions of various factors in studies that infer the an effect of
 the investigated trait (yellow) or infer no effect (grey). Older trees
 and those with lower sampling fraction more often yield significant
 associations.
 
-![](figures/scatterplot_sampling_tips.png) Figure 7. Scatterplot of
+![](figures/scatterplot_sampling_tips.png) Figure 8. Scatterplot of
 sampling fraction against number of tips with fitted lines. Points and
 lines coloured by whether there was a significant association (yellow)
 or not (grey) between the traits and diversification rates. An almost
