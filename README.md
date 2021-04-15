@@ -1,4 +1,3 @@
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # sseReview
@@ -57,9 +56,7 @@ This repository is structured as follow:
 
 Clone the repository, open the `.Rproj` file in RStudio and run:
 
-``` r
-source("make.R")
-```
+    source("make.R")
 
 ### Notes
 
@@ -72,16 +69,47 @@ source("make.R")
 
 ![](figures/stacked_barplot_models.png)
 
+Figure 1. Stacked barplot of -SSE model use over time in angiosperms.
+Bars represent total number of times different models are used. Multiple
+different models can be taken from a single study, but if the same model
+is used multiple times it is only counted once. Black line indicates the
+number of studies published per year.
+
 ![](figures/ridgeplot_tips_year.png)
+
+Figure 2. Ridgeplot of number of tips (log) in phylogenetic trees used
+in -SSE model publications on angiosperm taxa. Density plots are shown
+for each year separately showing a gradual increase in the number of
+tips in the tree over time.
 
 ![](figures/ridgeplot_tips_model.png)
 
-![](figures/treemap_orders.png)
+Figure 3. Ridgeplot of number of tips (log) in publications using -SSE
+models in angiosperm taxa. Density plots are shown for each -SSE model
+type separately, showing those model types that tend to be used with
+higher numbers of tips.
 
-![](figures/treemap_traits.png)
+![](figures/treemap_orders.png) Figure 4. Treemap of the orders
+considered in angiosperm-based studies using -SSE methods.
 
-![](figures/raincloud_tips.png)
+![](figures/treemap_traits.png) Figure 5. Treemap of the trait types
+considered in angiosperm-based studies using -SSE methods.
 
-![](figures/densities.png)
+![](figures/raincloud_tips.png) Figure 6. Raincloud plots of
+distributions of the number of tips in the phylogenetic trees in studies
+that infer the an effect of the investigated trait (pink) or infer no
+effect (green). On average more tips are found in studies that find an
+association.
 
-![](figures/scatterplot_sampling_tips.png)
+![](figures/densities.png) Figure 6. Paired density plots of
+distributions of various factors in studies that infer the an effect of
+the investigated trait (yellow) or infer no effect (grey). Older trees
+and those with lower sampling fraction more often yield significant
+associations.
+
+![](figures/scatterplot_sampling_tips.png) Figure 7. Scatterplot of
+sampling fraction against number of tips with fitted lines. Points and
+lines coloured by whether there was a significant association (yellow)
+or not (grey) between the traits and diversification rates. An almost
+flat relationship observed between sampling fraction and number of tips,
+and no effect between trait significance.
