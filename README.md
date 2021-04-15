@@ -113,3 +113,9 @@ lines coloured by whether there was a significant association (yellow)
 or not (grey) between the traits and diversification rates. An almost
 flat relationship observed between sampling fraction and number of tips,
 and no effect between trait significance.
+
+![](figures/grouped_barplot_traits.png) Figure 9. Barplot showing how
+often particular trait types are associated with changes in
+diversification rate. Bars are grouped by trait type and depicting
+number of models across the entire angiosperm -SSE dataset where a trait
+effect was (yellow) or was not (grey) found.
