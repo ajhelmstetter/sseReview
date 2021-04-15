@@ -10,3 +10,4 @@
 ^make\.R$
 ^README\.Rmd$
 ^README\.html$
+^\.github$
