@@ -11,7 +11,7 @@ library(papieRmache)
 
 kw<-c(kw,"assume","ancestral")
 
-in_dir <- "~/Dropbox/projects/AJH_DiveRS/pdfs_for_ssereview/contains_plants/"
+in_dir <- "~/Dropbox/projects/AJH_DiveRS/pdfs_for_ssereview/contains_angiosperms/"
 
 ct <- clean.text(in_dir = in_dir, all_keywords = kw)
 
@@ -21,13 +21,10 @@ td <-
                         in_dir = in_dir,
                         keywords = kw)
 
-#highlight numbers?
-no<-c("1","2","3","4","5","6","7","8","9")
-
 results<-semi.auto.paired(
-  in_dir = "~/Dropbox/projects/AJH_DiveRS/pdfs_for_ssereview/contains_plants/",
+  in_dir = in_dir,
   keywords1 =  c("root"),
-  keywords2 = c("state","assume","ancestral"),
+  keywords2 = c("assume","ancestral","state","phylogeny"),
   highlight = "sse",
   cleaned_text = ct,
   sorted_words = td
@@ -35,9 +32,9 @@ results<-semi.auto.paired(
 
 
 
-results<-semi.auto.value( in_dir = "~/Dropbox/projects/AJH_DiveRS/pdfs_for_ssereview/contains_plants/",
-                           keywords =  c("root","assume","ancestral"),
-                           highlight = c("state,","root","assume","ancestral"),
+results<-semi.auto.value( in_dir = in_dir,
+                           keywords =  c("root"),
+                           highlight = c("state","assume","ancestral"),
                            cleaned_text = ct,
                            sorted_words = td)
 
