@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![R CMD Check](https://github.com/ajhelmstetter/sseReview/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ajhelmstetter/sseReview/actions/workflows/R-CMD-check.yaml)
 [![License: GPL (>= 2)](https://img.shields.io/badge/License-GPL%20%28%3E%3D%202%29-blue.svg)](https://choosealicense.com/licenses/gpl-2.0/)
-[![Dependencies](https://img.shields.io/badge/dependencies-0/0-brightgreen?style=flat)](#)
+[![Dependencies](https://img.shields.io/badge/dependencies-20/158-red?style=flat)](#)
 <!-- badges: end -->
 
 

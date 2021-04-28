@@ -8,7 +8,7 @@
 Check](https://github.com/ajhelmstetter/sseReview/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ajhelmstetter/sseReview/actions/workflows/R-CMD-check.yaml)
 [![License: GPL (&gt;=
 2)](https://img.shields.io/badge/License-GPL%20%28%3E%3D%202%29-blue.svg)](https://choosealicense.com/licenses/gpl-2.0/)
-[![Dependencies](https://img.shields.io/badge/dependencies-0/0-brightgreen?style=flat)](#)
+[![Dependencies](https://img.shields.io/badge/dependencies-20/158-red?style=flat)](#)
 <!-- badges: end -->
 
 Research Compendium of the project **DiveRS -SSE review**
@@ -119,3 +119,11 @@ often particular trait types are associated with changes in
 diversification rate. Bars are grouped by trait type and depicting
 number of models across the entire angiosperm -SSE dataset where a trait
 effect was (yellow) or was not (grey) found.
+
+![](figures/xgboost_importance.png)
+
+Figure 10. Horizontal barplot showing the feature importance of an
+[xgboost](https://xgboost.readthedocs.io/en/latest/) model used to
+predict whether or not a study will produce a significant association
+between a trait and diversification rate. Colours represent clusters of
+variables of similar importance.
