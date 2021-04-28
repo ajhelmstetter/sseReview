@@ -115,3 +115,7 @@ Figure 8. Scatterplot of sampling fraction against number of tips with fitted li
 
 ![](figures/grouped_barplot_traits.png)
 Figure 9. Barplot showing how often particular trait types are associated with changes in diversification rate. Bars are grouped by trait type and depicting number of models across the entire angiosperm -SSE dataset where a trait effect was (yellow) or was not (grey) found.
+
+![](figures/xgboost_importance.png)
+
+Figure 10. Horizontal barplot showing the feature importance of an [xgboost](https://xgboost.readthedocs.io/en/latest/) model used to predict whether or not a study will produce a significant association between a trait and diversification rate. Colours represent clusters of variables of similar importance.

@@ -216,5 +216,5 @@ importanceRaw
 #Plotting the feature importance
 xgb.ggplot.importance(importance_matrix = importanceRaw)
 
-ggsave("figures/xgboost_importance.pdf")
+ggsave("figures/xgboost_importance.png")
 
