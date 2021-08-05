@@ -83,6 +83,134 @@ source("make.R")
 - All required packages and R functions will be loaded
 - Some analyses listed in the `make.R` might take time
 
+
+one liner to get years from text file of names of papers:
+
+```{bash eval = FALSE}
+grep -Eo '_[0-9]*_' years.txt | grep -Eo '[0-9]*' > years_only.txt
+```
+
+How many markers to put if study uses backbone with many markers, and adds taxa with few markers?
+
+Base pairs vs numbers of markers 
+
+cpDNA/mtDNA one marker or several?
+
+how to categorise non binary results - root?
+
+maximize reporting of sp and ext rate changes where missing
+
+quasse causing trouble in models
+
+waht is time supposed to capture? breadth of clade or methodological effect of age
+-cannot compare rates when times are not in Ma
+
+semi.auto.paired returning 'answ not found' when paired matches arent found
+
+What if larger phylogeny is trimmed based on data? Size of phylogeny or tips used in -SSE model?
+
+prevelence of outgroups biasing -SSE results?
+
+how does number of different models in study affect outcome?
+
+### Database issues :
+
+* MuSSE results to be reclassifed to 1 to number of categories where 1 is highest rate
+* GeoSSE results - how to deal with species in both areas?
+* How to deal with RADseq - 1 marker (concatenated) or 42900 markers (or get rid?)
+* what if analyses are on larger groups than angiosperms as all seed plants - currently included
+* what about when papers use explicitly bisse and hisse without being nested? include both? check
+* ask authors to cross-check results
+
+### Paper issues :
+
+* De Vos et al. 2014 - many versions of bisse on subsets, only one included
+* Onstein_et_al_2018_To_adapt_or_go_extinct_The_fate_of_megafaunal_pal.txt did analyses on whole world and then new world and old world specifically, what do with this?
+
+## To talk about SSE review meeting
+
+root state :
+
+* reported root state often estimated via another approach than -SSE
+	* this may be different due to -SSE estimation taking into account div rates
+* do methods like geosse also give root states? 
+
+best predictors :
+
+* all dataset variables, rather than trait variables
+
+focus on diversification rate, but perhaps speciation and extinction results could be informative re: LP.
+
+### Paper collection method
+
+Find -SSE methods papers on google scholar (see map)
+Search citing literature for 'plant'
+Import PDF and metadata of papers from their website w/ Zotero
+Rename PDF based on metadata
+Rename PDF to remove unwanted characters
+
+```{bash eval = FALSE}
+#modifying filenames to be readable
+#TO DO: REMOVE "()" as well
+rename 's/[\.,-]/_/g' *
+rename 's/[\"]//g' *
+rename "s/\'//g" *
+rename 's/ /_/g' *
+rename 's/_+/_/g' *
+rename 's/_pdf/\.pdf/g' *
+rename 's/\(//g' *
+rename 's/\)//g' *
+```
+
+Remove papers that contain non-angiosperms
+Run pdftotext on all PDFs to create text file for papieRmache
+
+### -SSE-athon
+
+Five groups : 
+
+Alcantara - Castillo
+Chauveau - Hipp
+Horn - Matuszak
+Mayrose - Serrano
+Silvestro - Zenil-Ferguson
+
+### Meeting early May
+
+To do :
+* Number of studies vs size of order (done)
+* sampling fraction vs number of species of clade of interest (done)
+* how do hidden states affect proportion significant (done)
+  * what happens when we throw out bad studies?
+* studies on same clades but different trees
+* traits in figures are per study/per model? e.g. square plots
+* use bigger categories for xgboost / paired barplots (done)
+
+Discussion points :
+* error in trait vs real association (or lack of)
+* quality of data across different trait types
+* if you dont think this is true about your trait of interest then here's how you should improve/choose your studies
+* difficulty of getting trait data, how does this affect patterns?
+
+### Meeting 25/05/21
+
+To do :
+* description of columns of spreadsheet written down
+* stacked barplot (done)
+* correlation between age and tips (done)
+* sampling fraction over time
+* colour xgboost based on whether they are model vs plant trait - data quality, tree, model, characters
+* age reclassification?
+* reclassify as multi-category rather than binary?
+* machine learning explains interactions? (check)
+* recode multistate models
+* recode div/spe/ext to one column 
+
+Discussion points :
+* random spot checks of data rather than everything
+* importance of time calibration accuracy
+* skeletal fractions vs global sampling fraction
+
 ### Plots
 
 ![](figures/stacked_barplot_models.png) 

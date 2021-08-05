@@ -8,6 +8,8 @@ library(hrbrthemes)
 library(tidyverse)
 library(ggplot2)
 
+options(ggplot2.discrete.fill = brewer.pal(11, "RdYlBu"))
+
 #read in full data frame
 df <-
   read.csv("~/Dropbox/projects/AJH_DiveRS/sseReview/data/sse_review_table - main_table.csv")
@@ -82,6 +84,8 @@ ggplot(ym, aes(y = n, x = year)) +
   ylab("Frequency of model use") +
   theme(
     # remove the vertical grid lines
+    text = element_text(size = 11),
+    axis.title = element_text(size = 12),
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
     # explicitly set the horizontal lines (or they will disappear too)
@@ -109,7 +113,7 @@ ggplot(ym, aes(y = n, x = year)) +
 
 # variable widths not possible in ggplot2 without geom_rect() craziness
 ggsave(
-  "stacked_barplot_models.png",
+  "figures/stacked_barplot_models.png",
   width = 20,
   height = 12,
   units = 'cm'

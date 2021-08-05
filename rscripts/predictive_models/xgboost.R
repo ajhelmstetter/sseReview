@@ -1,7 +1,9 @@
-
-
 rm(list = ls())
+
 library(xgboost)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
 
 #read in data
 df <- read.csv("data/sse_review_table - main_table.csv")
@@ -15,7 +17,11 @@ df <-
     'study',
     'model_no',
     'order',
-    'trait_type_1',
+    'trait_level_1',
+    'trait_level_2',
+    'trait_level_3',
+    'trait_level_4',
+    'trait_level_5',
     'sse_model',
     'tips',
     'year',
@@ -27,37 +33,45 @@ df <-
     'no_mito',
     'no_nuclear',
     'perc_sampling',
-    'samples_per_state'
+    'samples_per_state',
+    'putative_ancestral_state'
   )]
 
+
+#feature normalization
+#combined <- normalizeFeatures(df, target = "div_inc")
 
 ###
 # Data transformations
 ###
 
+# NUMBER OF MARKERS
 #log no_markers as long tail
 hist(df$no_markers)
 df$no_markers <- log(df$no_markers)
 hist(df$no_markers)
 
+#NUMBER OF TIPS
 #log tips as long tail
 hist(df$tips)
 df$tips <- log(df$tips)
 hist(df$tips)
 
+#AGE OF TREE
 #log age as long tail
 #still strange
 hist(df$age)
 df$age <- log(df$age)
 hist(df$age)
 
-
+#GLOBAL SAMPLING FRACTION
 hist(df$perc_sampling)
 
 #arcsine
 df$perc_sampling <- asin(sqrt(df$perc_sampling))
 hist(df$perc_sampling)
 
+#SAMPLES PER STATE
 #change to numeric prior to transformation, remove NAs
 df$samples_per_state <- as.numeric(df$samples_per_state)
 
@@ -77,15 +91,13 @@ df$samples_per_state[is.na(df$samples_per_state)] <- 0
 
 #remove quasse for div_inc
 #may need to remove others too
-df <- df[df$sse_model != "QuaSSE", ]
+df <- df[df$sse_model != "QuaSSE",]
 
 #make sure factors are factors
 df$order <- as.factor(df$order)
-df$trait_type <- as.factor(df$trait_type)
+#df$trait_type <- as.factor(df$trait_level_3)
 df$sse_model <- as.factor(df$sse_model)
 df$year <- as.factor(df$year)
-
-
 
 #make samples per state into tip bias
 df$samples_per_state
@@ -124,7 +136,7 @@ df_cor <-
     'samples_per_state'
   )]
 
-cor(df_cor)
+cor(df_cor, use = "complete.obs")
 
 #reduce to a single binary result per model per study
 df3 <- df %>%
@@ -145,9 +157,9 @@ df3$tip_bias <- top_df$samples_per_state / bot_df$samples_per_state
 df <- as.data.frame(df3)
 
 #remove study and model no (first two rows)
-df <- df[, -which(colnames(df)%in%c('study',
-                                    'model_no',
-                                    'samples_per_state'))]
+df <- df[, -which(colnames(df) %in% c('study',
+                                      'model_no',
+                                      'samples_per_state'))]
 
 library(data.table)
 df <- data.table(df, keep.rownames = FALSE)
@@ -165,8 +177,8 @@ str(df)
 
 #The purpose is to transform each value of each categorical feature in a binary feature {0, 1}.
 #Response is excluded because it will be our label column, the one we want to predict.
-require(Matrix)
-require(xgboost)
+library(Matrix)
+library(xgboost)
 sparse_matrix <- sparse.model.matrix(div_inc ~ . - 1, data = df)
 head(sparse_matrix)
 
@@ -181,10 +193,13 @@ bst <-
     data = sparse_matrix,
     label = as.numeric(output_vector),
     max.depth = 4,
-    eta = 1,
+    eta = 0.1,
     nthread = 1,
-    nrounds = 2,
-    objective = "binary:logistic"
+    nrounds = 10000,
+    eval_metric = 'auc',
+    objective = "binary:logistic",
+    early_stopping_rounds = 20,
+    print_every_n = 1000
   )
 
 importance <-
@@ -204,17 +219,144 @@ head(importance)
 #You should not use it (unless you know why you want to use it).
 
 importanceRaw <-
-  xgb.importance(
-    feature_names = sparse_matrix@Dimnames[[2]],
-    model = bst,
-    data = sparse_matrix,
-    label = output_vector
-  )
+  xgb.importance(feature_names = sparse_matrix@Dimnames[[2]],
+                 model = bst,)
 
 importanceRaw
 
 #Plotting the feature importance
 xgb.ggplot.importance(importance_matrix = importanceRaw)
 
+###
+# TRAIN & TEST
+###
+
+#set label
+label <- as.numeric(output_vector)
+
+n = nrow(sparse_matrix)
+
+#training percentage
+tp <- 0.75
+
+train.index = sample(n, floor(tp * n))
+train.data = as.matrix(sparse_matrix[train.index, ])
+train.label = label[train.index]
+test.data = as.matrix(sparse_matrix[-train.index, ])
+test.label = label[-train.index]
+
+xgb.fit <-
+  xgboost(
+    data = train.data,
+    label = train.label,
+    max.depth = 4,
+    eta = 0.05,
+    gamma = 0,
+    nthread = 1,
+    nrounds = 20000,
+    eval_metric = 'auc',
+    early_stopping_rounds = 20,
+    objective = "binary:logistic",
+    print_every_n = 1000
+  )
+
+# Review the final model and results
+xgb.fit
+
+# Predict outcomes with the test data
+xgb.probs = as.data.frame(predict(xgb.fit, test.data))
+
+#Turn prediction probabilities into classifications by thresholding at 0.5.
+xgb.pred <- ifelse(xgb.probs > 0.6, 1, 0)
+
+hist(xgb.probs$`predict(xgb.fit, test.data)`)
+
+#package prevelance
+#TSS, auc etc for quality of
+
+# Calculate the final accuracy
+table(xgb.pred, test.label)
+
+importanceRaw <-
+  xgb.importance(feature_names = sparse_matrix@Dimnames[[2]],
+                 model = xgb.fit)
+
+#Plotting the feature importance
+gg <- xgb.ggplot.importance(importance_matrix = importanceRaw)
+gg + ggtitle(paste(
+  "Training:",
+  100 * tp ,
+  "%",
+  "| Final Accuracy =",
+  round(100 * mean(xgb.pred == test.label), 2),
+  "%"
+))
+
 ggsave("figures/xgboost_importance.png")
 
+
+# plot them features! what's contributing most to our model?
+xgb.plot.multi.trees(feature_names = names(sparse_matrix),
+                     model = xgb.fit)
+
+
+###
+# Cross-validation
+###
+
+#default parameters
+params <- list(booster = "gbtree", objective = "binary:logistic", eta=0.3, gamma=0, max_depth=5, min_child_weight=1, subsample=1, colsample_bytree=1)
+
+#Using the inbuilt xgb.cv function, let's calculate the best nround for this model. In addition, this function also returns CV error, which is an estimate of test error.
+xgbcv <-
+  xgb.cv(
+    params = params,
+    data = train.data,
+    label = train.label,
+    nrounds = 100,
+    nfold = 5,
+    showsd = T,
+    stratified = T,
+    print.every.n = 10,
+    eval_metric = 'error',
+    early.stop.round = 20,
+    maximize = F
+  )
+
+1-min(xgbcv$evaluation_log$test_error_mean)
+
+
+#convert characters to factors
+fact_col <- colnames(train)[sapply(train,is.character)]
+
+for(i in fact_col) set(train,j=i,value = factor(train[[i]]))
+for (i in fact_col) set(test,j=i,value = factor(test[[i]]))
+
+#create tasks
+traintask <- makeClassifTask (data = train.data,target = "div_inc")
+> testtask <- makeClassifTask (data = test,target = "target")
+
+#do one hot encoding`<br/>
+> traintask <- createDummyFeatures (obj = traintask,target = "target")
+> testtask <- createDummyFeatures (obj = testtask,target = "target")
+
+library(mlr)
+
+#create learner
+lrn <- makeLearner("classif.xgboost",predict.type = "response")
+lrn$par.vals <- list( objective="binary:logistic", eval_metric="error", nrounds=100L, eta=0.1)
+
+#set parameter space
+params <- makeParamSet( makeDiscreteParam("booster",values = c("gbtree","gblinear")), makeIntegerParam("max_depth",lower = 3L,upper = 10L), makeNumericParam("min_child_weight",lower = 1L,upper = 10L), makeNumericParam("subsample",lower = 0.5,upper = 1), makeNumericParam("colsample_bytree",lower = 0.5,upper = 1))
+
+#set resampling strategy
+rdesc <- makeResampleDesc("CV",stratify = T,iters=5L)
+
+#search strategy
+ctrl <- makeTuneControlRandom(maxit = 10L)
+
+#parameter tuning
+mytune <- tuneParams(learner = lrn, task = traintask, resampling = rdesc, measures = acc, par.set = params, control = ctrl, show.info = T)
+
+mytune$y
+#0.873069

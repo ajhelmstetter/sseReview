@@ -2,13 +2,13 @@
 # Taxonomic diversity in SSE models
 ###
 
-setwd("~/Dropbox/projects/AJH_DiveRS/sseReview/figures/")
-
 #Library
 library(tidyverse)
 library(ggplot2)
 library(treemapify)
 library(RColorBrewer)
+
+options(ggplot2.discrete.fill = brewer.pal(11, "RdYlBu"))
 
 #read in full data frame
 df <-
@@ -19,8 +19,8 @@ df <-
   df[, c(
     'study',
     'order',
-    'trait_type_1',
-    'trait_type_2'
+    'trait_level_2',
+    'trait_level_4'
   )]
 
 #make sure columns are the right type
@@ -46,6 +46,9 @@ colnames(ord_freq)<-c("order","freq")
 nb.cols <- length(levels(ord_freq$order))
 mycolors <- colorRampPalette(brewer.pal(12, "Set3"))(nb.cols)
 
+mycolors <- colorRampPalette(brewer.pal(12, "RdYlBu"))(nb.cols)
+
+options(ggplot2.discrete.fill = brewer.pal(11, "RdYlBu"))
 #plot treemap
 ggplot(ord_freq, aes(area = freq, fill = order, label=order)) +
   geom_treemap(alpha=0.7)  +
@@ -53,7 +56,7 @@ ggplot(ord_freq, aes(area = freq, fill = order, label=order)) +
   theme(legend.position = "none") +
   scale_fill_manual(values = mycolors)
 
-ggsave("treemap_orders.png",
+ggsave("figures/treemap_orders.png",
        width = 20,
        height = 12,
        units = 'cm'
@@ -62,7 +65,6 @@ ggsave("treemap_orders.png",
 ###
 # Trait type diversity in SSE models
 ###
-
 
 #unique combinations of study/trait type
 df_uni<- unique(df[c("study", "trait_type_1")])

@@ -1,3 +1,7 @@
+###
+# ridgeplots
+###
+
 # Library
 library(viridis)
 library(hrbrthemes)
@@ -12,7 +16,7 @@ library(RColorBrewer)
 my_theme = theme(
   text = element_text(size = 12),
   axis.text = element_text(size = 12),
-  axis.title.x = element_text(size = 18, margin = margin(
+  axis.title.x = element_text(size = 11, margin = margin(
     t = 5,
     r = 0,
     b = 0,
@@ -27,7 +31,7 @@ my_theme = theme(
   axis.line.y = element_blank(),
   legend.key = element_blank(),
   legend.title = element_blank(),
-  legend.text = element_text(size = 12),
+  legend.text = element_text(size = 10),
   legend.position = c(0.8, 0.9),
   panel.border = element_blank(),
   panel.grid.minor = element_blank(),
@@ -36,11 +40,11 @@ my_theme = theme(
 )
 
 #palette
-#options(ggplot2.discrete.fill = c("#999999", "#E69F00"))
+options(ggplot2.discrete.fill = c("#999999", "#E69F00"))
 
 #read in full data frame
 df <-
-  read.csv("data/sse_review_table - main_table.csv")
+  read.csv("~/Dropbox/projects/AJH_DiveRS/sseReview/data/sse_review_table - main_table.csv")
 
 colnames(df)
 
@@ -64,7 +68,7 @@ df <-
 
 #make sure columns are the right type
 df$order <- as.factor(df$order)
-df$trait_level_4 <- as.factor(df$trait_level_4)
+df$trait_type_1 <- as.factor(df$trait_level_4)
 df$sse_model <- as.factor(df$sse_model)
 df$year <- as.factor(df$year)
 df$perc_sampling <- as.numeric(df$perc_sampling)
@@ -100,58 +104,73 @@ df3 <- df %>%
   dplyr::slice(which.max(div_inc))
 
 #make binary trait factor
-#df3$div_inc <- as.factor(df3$div_inc)
+df3$div_inc <- as.factor(df3$div_inc)
 
-agg_st_mod<-aggregate(df3$div_inc,by=list(df3$study,df3$model_no,df3$trait_level_4),FUN=sum)
-#view(agg_st_mod)
+#make sampling fraction %
+df3$perc_sampling <- df3$perc_sampling * 100
 
-#make multistate models with more than one positive effect 1
-agg_st_mod[agg_st_mod$x>1,]$x<-1
+#add tip bias column by dividing larger number of tips with state A by smaller number of tips with state B
+#multi-state models are therefore largest tip bias possible in the data
+df3$tip_bias <- top_df$samples_per_state / bot_df$samples_per_state
 
-#count numbers of 0 and 1 per trait
-df2 <-agg_st_mod %>% group_by(Group.3, x) %>% summarize(count=n())
+theme_set(theme_minimal())
 
-#missing combinations
-mc<-data.frame(c("Fire","Soil","Symbiosis"),
-      c("1","1","0"),
-      c(0,0,0))
+#remove models where density cant be calculated
+remove.list <-
+  paste(c("SecSSE", "MuHiSSE", "MiSSE", "BiSSEness"), collapse = '|')
+df4 <- df3 %>% filter(!grepl(remove.list, sse_model))
 
-colnames(mc)<-colnames(df2)
+#####
+# Tips vs publication year
+#####
+options(ggplot2.discrete.fill = brewer.pal(11, "RdYlBu"))
 
-df2$x<-as.character(df2$x)
-
-df2<-rbind(df2,mc)
-
-df2
-
-ggplot(df2, aes(fill=x, y=count, x=reorder(Group.3, -count))) +
-  geom_bar(position="dodge", stat="identity") +
-  scale_x_discrete(name ="Trait category") +
-  scale_y_continuous(expand = c(0, 0),
-                     limits=c(0,max(df2$count)+10),
-                     name ="Count") +
-  scale_fill_discrete(labels = c("No effect", "Effect")) +
-  theme(axis.text.x = element_text(angle = 90,vjust=-0.05,hjust = 1),
-        axis.ticks.x = element_blank(),
-        axis.ticks.y = element_blank(),
-        legend.title = element_blank(),
-        panel.border = element_blank(),
-        panel.grid.minor = element_line(colour="grey"),
-        panel.grid.major.y = element_line(colour="grey"),
-        panel.grid.major.x = element_blank(),
-        panel.background = element_rect(fill = "white"),
-        legend.position = c(0.89,0.91),
-        legend.background = element_blank())
+ggplot(df5, aes(
+  x = tips,
+  y = year,
+  group = year,
+  fill = year
+)) +
+  geom_density_ridges(rel_min_height = 0.0001,
+                      alpha = 0.9,
+                      color = NA) +
+  scale_x_continuous(name = "Number of tips", trans='log10') +
+  scale_y_discrete(name = "Publication year") +
+  theme(legend.position = "none",
+        axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0)),
+        axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)))
 
 ggsave(
-  "~/Dropbox/projects/AJH_DiveRS/sseReview/figures/grouped_barplot_traits.png",
+  "figures/ridgeplot_tips_year.png",
   width = 20,
   height = 12,
   units = 'cm'
 )
 
-####
-# Hidden-state models only
-####
+#####
+# Sampling fraction vs publication year
+#####
 
-df3<-df2[df2$]
+# Cut off the trailing tails.
+# Specify `rel_min_height`: a percent cutoff
+options(ggplot2.discrete.fill = brewer.pal(11, "PiYG"))
+
+ggplot(df5, aes(
+  x = perc_sampling,
+  y = year,
+  group = year,
+  fill = year
+)) +
+  geom_density_ridges(rel_min_height = 0.001,
+                      alpha = 0.9,
+                      color = NA) +
+  scale_x_continuous(name = "Sampling Fraction", limits = c(0, 100)) +
+  scale_y_discrete(name = "Publication year") +
+  theme(legend.position = "none")
+
+ggsave(
+  "ridgeplot_samplingfraction_year.png",
+  width = 20,
+  height = 12,
+  units = 'cm'
+)

@@ -14,9 +14,9 @@ library(RColorBrewer)
 
 # theme
 my_theme = theme(
-  text = element_text(size = 12),
-  axis.text = element_text(size = 12),
-  axis.title.x = element_text(size = 18, margin = margin(
+  text = element_text(size = 10),
+  axis.text = element_text(size = 10),
+  axis.title.x = element_text(size = 11, margin = margin(
     t = 5,
     r = 0,
     b = 0,
@@ -31,7 +31,7 @@ my_theme = theme(
   axis.line.y = element_blank(),
   legend.key = element_blank(),
   legend.title = element_blank(),
-  legend.text = element_text(size = 12),
+  legend.text = element_text(size = 10),
   legend.position = c(0.8, 0.9),
   panel.border = element_blank(),
   panel.grid.minor = element_blank(),
@@ -40,11 +40,11 @@ my_theme = theme(
 )
 
 #palette
-#options(ggplot2.discrete.fill = c("#999999", "#E69F00"))
+options(ggplot2.discrete.fill = c("#999999", "#E69F00"))
 
 #read in full data frame
 df <-
-  read.csv("data/sse_review_table - main_table.csv")
+  read.csv("~/Dropbox/projects/AJH_DiveRS/sseReview/data/sse_review_table - main_table.csv")
 
 colnames(df)
 
@@ -54,7 +54,7 @@ df <-
     'study',
     'model_no',
     'order',
-    'trait_level_1',
+    'trait_type_1',
     'sse_model',
     'tips',
     'year',
@@ -68,7 +68,7 @@ df <-
 
 #make sure columns are the right type
 df$order <- as.factor(df$order)
-df$trait_level_1 <- as.factor(df$trait_level_1)
+df$trait_type_1 <- as.factor(df$trait_type_1)
 df$sse_model <- as.factor(df$sse_model)
 df$year <- as.factor(df$year)
 df$perc_sampling <- as.numeric(df$perc_sampling)
@@ -113,120 +113,99 @@ df3$perc_sampling <- df3$perc_sampling * 100
 #multi-state models are therefore largest tip bias possible in the data
 df3$tip_bias <- top_df$samples_per_state / bot_df$samples_per_state
 
+#remove models where density cant be calculated
+remove.list <-
+  paste(c("MiSSE", "BiSSEness","BiSSE","MuSSE","GeoSSE","ClaSSE","FiSSE","QuaSSE"), collapse = '|')
+df3 <- df3 %>% filter(!grepl(remove.list, sse_model))
+
+
 ###
 # plot densities
 ###
 
 theme_set(my_theme)
 
-options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[1]))
-
 #tips
 p1 <-
-  ggplot(df3, aes(tips, fill = div_inc, colour = div_inc)) +
+  ggplot(df3, aes(log(tips), fill = div_inc, colour = div_inc)) +
   geom_density(alpha = 0.5, color = NA) +
-  scale_x_continuous(name = "Number of tips", trans = "log10") +
+  scale_x_continuous(name = "Number of tips (log)") +
   scale_y_continuous(expand = c(0, 0)) +
   scale_fill_discrete(labels = c("No effect", "Effect"))
-
-p1
-
-ggsave("figures/densities_tips.png",
-       width = 20,
-       height = 12,
-       units = 'cm')
-
-options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[2]))
 
 #age
-p2 <- ggplot(df3, aes(age, fill = div_inc, colour = div_inc)) +
-  geom_density(alpha = 0.5, color = NA) +
-  scale_x_continuous(name = "Age of tree",  trans = "log10") +
-  scale_y_continuous(expand = c(0, 0)) +
-  scale_fill_discrete(labels = c("No effect", "Effect")) +
-  theme(legend.position='top',
-        legend.justification='left',
-        legend.direction='vertical')
-
-p2
-
-ggsave("figures/densities_age.png",
-       width = 20,
-       height = 12,
-       units = 'cm')
+p2 <- ggplot(df3, aes(log(age), fill = div_inc, colour = div_inc)) +
+  geom_density(alpha = 0.5, color = NA) + theme(legend.position = "none") +
+  scale_x_continuous(name = "Age of tree (log)") +
+  scale_y_continuous(expand = c(0, 0))
 
 #perc_sampling
-options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[3]))
-
 p3 <-
   ggplot(df3, aes(perc_sampling, fill = div_inc, colour = div_inc)) +
-  geom_density(alpha = 0.5, color = NA) +
+  geom_density(alpha = 0.5, color = NA) + theme(legend.position = "none") +
   scale_x_continuous(name = "Sampling fraction (%)") +
-  scale_y_continuous(expand = c(0, 0),limits=c(0,0.02)) +
-  scale_fill_discrete(labels = c("No effect", "Effect"))
-
-p3
-
-ggsave("figures/densities_sampling.png",
-       width = 20,
-       height = 12,
-       units = 'cm')
+  scale_y_continuous(expand = c(0, 0))
 
 #tip bias
-options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[4]))
-
 p4 <- ggplot(df3, aes(tip_bias, fill = div_inc, colour = div_inc)) +
-  geom_density(alpha = 0.5, color = NA) +
+  geom_density(alpha = 0.5, color = NA) + theme(legend.position = "none") +
   scale_x_continuous(name = "Tip bias", limits = c(0, 30)) +
-  scale_y_continuous(expand = c(0, 0)) +
-  scale_fill_discrete(labels = c("No effect", "Effect"))
-
-p4
-
-ggsave("figures/densities_tipbias.png",
-       width = 20,
-       height = 12,
-       units = 'cm')
+  scale_y_continuous(expand = c(0, 0))
 
 #number of markers
-options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[5]))
-
 p5 <-
-  ggplot(df3, aes(no_markers, fill = div_inc, colour = div_inc)) +
-  geom_density(alpha = 0.5, color = NA) +
-  scale_x_continuous(name = "Number of markers",  trans = "log10") +
-  scale_y_continuous(expand = c(0, 0)) +
-  scale_fill_discrete(labels = c("No effect", "Effect"))
+  ggplot(df3, aes(log(no_markers), fill = div_inc, colour = div_inc)) +
+  geom_density(alpha = 0.5, color = NA) + theme(legend.position = "none") +
+  scale_x_continuous(name = "Number of markers (log)") +
+  scale_y_continuous(expand = c(0, 0))
 
-p5
-
-ggsave("figures/densities_markers.png",
-       width = 20,
-       height = 12,
-       units = 'cm')
-
-
-###
-#arrange plots together
-###
-
+#arrange plots
 p1 | p2 / p3 | p4 / p5
 
-ggsave("figures/densities_all.png",
+ggsave("densities_hidden_states.png",
        width = 20,
        height = 12,
        units = 'cm')
+
+###
+# scatterplot of sampling fraction vs tips in tree
+###
+
+theme_set(theme_classic())
+options(ggplot2.discrete.fill = c("#999999", "#E69F00"))
+
+#sampling fraction vs tip number
+ggplot(df3, aes(x = perc_sampling, y = tips, color = div_inc)) +
+  geom_point(alpha = 0.5, size = 2.5) +
+  geom_smooth(method = lm, linetype = "dashed", aes(fill = div_inc)) +
+  scale_x_continuous(name = "Sampling fraction (%)") +
+  scale_y_continuous(name = "Number of tips", trans='log10') +
+  theme(
+    legend.key = element_blank(),
+    legend.title = element_blank(),
+    legend.background = element_blank(),
+    legend.text = element_text(size = 10),
+    legend.position = c(0.8, 0.9),
+    panel.grid.minor = element_line(),
+    panel.grid.major = element_line()
+  )
+
+ggsave(
+  "scatterplot_sampling_tips_hidden_states.png",
+  width = 20,
+  height = 12,
+  units = 'cm'
+)
+
 
 ###
 # scatterplot of sampling fraction vs total number of species in clade
 ###
 
 theme_set(theme_classic())
-options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[3]))
+options(ggplot2.discrete.fill = c("#999999", "#E69F00"))
 
 df3$tips/(df3$perc_sampling/100)
-
-df3[df3$div_inc==1,]
 
 #tip number / sampling fraction = total number of taxa in clade of interest
 #sampling fraction vs tip number
@@ -240,13 +219,13 @@ ggplot(df3, aes(x = perc_sampling, y = tips/(perc_sampling/100), color = div_inc
     legend.title = element_blank(),
     legend.background = element_blank(),
     legend.text = element_text(size = 10),
-    legend.position = "none",
+    legend.position = c(0.8, 0.9),
     panel.grid.minor = element_line(),
     panel.grid.major = element_line()
   )
 
 ggsave(
-  "figures/scatterplot_sampling_total_species.png",
+  "scatterplot_sampling_total_species_hidden_states.png",
   width = 20,
   height = 12,
   units = 'cm'
