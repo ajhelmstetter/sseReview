@@ -3,8 +3,8 @@
 ###
 
 # Library
-library(viridis)
-library(hrbrthemes)
+#library(viridis)
+#library(hrbrthemes)
 library(tidyverse)
 library(ggplot2)
 library(ggridges)
@@ -39,14 +39,10 @@ my_theme = theme(
   panel.background = element_blank()
 )
 
-#palette
-#options(ggplot2.discrete.fill = c("#999999", "#E69F00"))
 
 #read in full data frame
 df <-
   read.csv("data/sse_review_table - main_table.csv")
-
-colnames(df)
 
 #choose the columns you want in model (plus study/model_no for formatting)
 df <-
@@ -74,44 +70,70 @@ df$year <- as.factor(df$year)
 df$perc_sampling <- as.numeric(df$perc_sampling)
 df$samples_per_state <- as.numeric(df$samples_per_state)
 
-#remove na
-#df<-drop_na(df)
+#sort by study name
+df<-df[order(df$study),]
 
+####
 #make samples per state into tip bias
-df$samples_per_state
+####
 
-#make column with combination of study and model
+#make column with combination of study and model for easy categorization
 tmp_df <- df %>% tidyr::unite("study_model", 1:2, remove = T)
 
 #reduce dataset to two columns
 tmp_df <- tmp_df[, c("study_model", "samples_per_state")]
-
 head(tmp_df)
+
+tmp_df %>% group_by(study_model)
 
 #get max and min values of samples per state for each model
 top_df <-
   tmp_df %>% group_by(study_model) %>% slice_max(n = 1,
                                                  order_by = samples_per_state,
                                                  with_ties = F)
+
+head(top_df)
+
 bot_df <-
   tmp_df %>% group_by(study_model) %>% slice_min(n = 1,
                                                  order_by = samples_per_state,
                                                  with_ties = F)
 
-#reduce to a single binary result per model per study
-df3 <- df %>%
+head(bot_df)
+
+#reduce entire dataset to a single binary result per model per study
+df2 <- df %>%
   group_by(study, model_no) %>%
-  dplyr::slice(which.max(div_inc))
+  dplyr::slice(which.max(div_inc)) #if 1 is present in comparison there are rate differences, if absent there aren't
+
+#not run
+#if multistate models are removed, number of div_inc = 1 should be the same
+#df3 <- df[df$sse_model != "MuSSE",]
+#df3 <- df3[df3$sse_model != "SecSSE",]
+#df3 <- df3[df3$sse_model != "MuHiSSE",]
+#df4 <- df2[df2$sse_model != "MuSSE",]
+#df4 <- df4[df4$sse_model != "SecSSE",]
+#df4 <- df4[df4$sse_model != "MuHiSSE",]
+#table(df3$div_inc)
+#table(df4$div_inc)
+
+#make div_inc values > 1 (multistate models) = 1
+df2$div_inc[df2$div_inc>1]<-1
 
 #make binary trait factor
-df3$div_inc <- as.factor(df3$div_inc)
+df2$div_inc <- as.factor(df2$div_inc)
 
 #make sampling fraction %
-df3$perc_sampling <- df3$perc_sampling * 100
+df2$perc_sampling <- df2$perc_sampling * 100
+
+#check that orders of df2 and top/bot_df match up
+setdiff(top_df$study_model,bot_df$study_model)
+setdiff(bot_df$study_model,top_df$study_model)
+table(df2$study==gsub('(.*)_\\w+', '\\1',top_df$study_model))
 
 #add tip bias column by dividing larger number of tips with state A by smaller number of tips with state B
 #multi-state models are therefore largest tip bias possible in the data
-df3$tip_bias <- top_df$samples_per_state / bot_df$samples_per_state
+df2$tip_bias <- top_df$samples_per_state / bot_df$samples_per_state
 
 ###
 # plot densities
@@ -123,131 +145,96 @@ options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[1]))
 
 #tips
 p1 <-
-  ggplot(df3, aes(tips, fill = div_inc, colour = div_inc)) +
+  ggplot(df2, aes(tips, fill = div_inc, colour = div_inc)) +
   geom_density(alpha = 0.5, color = NA) +
-  scale_x_continuous(name = "Number of tips", trans = "log10") +
+  scale_x_continuous(name = "Number of tips",  trans = "log10") +
   scale_y_continuous(expand = c(0, 0)) +
-  scale_fill_discrete(labels = c("No effect", "Effect"))
-
+  scale_fill_discrete(labels = c("No effect", "Effect")) +
+  annotate(geom="text", x=10, y=1.26, label="(a)",size=6)
 p1
 
-ggsave("figures/densities_tips.png",
-       width = 20,
-       height = 12,
-       units = 'cm')
+#number of measurements
+length(na.omit(df2$tips))
 
 options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[2]))
 
 #age
-p2 <- ggplot(df3, aes(age, fill = div_inc, colour = div_inc)) +
+p2 <- ggplot(df2, aes(age, fill = div_inc, colour = div_inc)) +
   geom_density(alpha = 0.5, color = NA) +
   scale_x_continuous(name = "Age of tree",  trans = "log10") +
   scale_y_continuous(expand = c(0, 0)) +
   scale_fill_discrete(labels = c("No effect", "Effect")) +
-  theme(legend.position='top',
-        legend.justification='left',
-        legend.direction='vertical')
-
+  #theme(legend.position='top',
+  #      legend.justification='left',
+  #     legend.direction='vertical')
+  theme(legend.position = "none") +
+  annotate(geom="text", x=1, y=1.48, label="(b)",size=6)
 p2
 
-ggsave("figures/densities_age.png",
-       width = 20,
-       height = 12,
-       units = 'cm')
+#number of measurements
+length(na.omit(df2$age))
 
 #perc_sampling
 options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[3]))
 
 p3 <-
-  ggplot(df3, aes(perc_sampling, fill = div_inc, colour = div_inc)) +
+  ggplot(df2, aes(perc_sampling, fill = div_inc, colour = div_inc)) +
   geom_density(alpha = 0.5, color = NA) +
   scale_x_continuous(name = "Sampling fraction (%)") +
   scale_y_continuous(expand = c(0, 0),limits=c(0,0.02)) +
-  scale_fill_discrete(labels = c("No effect", "Effect"))
-
+  scale_fill_discrete(labels = c("No effect", "Effect")) +
+  theme(legend.position = "none") +
+  annotate(geom="text", x=0, y=0.0195, label="(d)",size=6)
 p3
 
-ggsave("figures/densities_sampling.png",
-       width = 20,
-       height = 12,
-       units = 'cm')
+#number of measurements
+length(na.omit(df2$perc_sampling))
 
 #tip bias
+#there are some extreme tip values that are fall outside the scale
 options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[4]))
+
+#get rid of studies where there are inf values for tip bias
+df3<-as.data.frame(df2)
+df3<-df3[df3$tip_bias<100000,]
 
 p4 <- ggplot(df3, aes(tip_bias, fill = div_inc, colour = div_inc)) +
   geom_density(alpha = 0.5, color = NA) +
-  scale_x_continuous(name = "Tip bias", limits = c(0, 30)) +
+  scale_x_continuous(name = "Tip bias",  trans = "log10") +
   scale_y_continuous(expand = c(0, 0)) +
-  scale_fill_discrete(labels = c("No effect", "Effect"))
+  scale_fill_discrete(labels = c("No effect", "Effect")) +
+  theme(legend.position = "none") +
+  annotate(geom="text", x=1, y=1.16, label="(e)",size=6)
 
 p4
 
-ggsave("figures/densities_tipbias.png",
-       width = 20,
-       height = 12,
-       units = 'cm')
+#number of measurements
+length(na.omit(df2$tip_bias))
 
 #number of markers
 options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[5]))
 
 p5 <-
-  ggplot(df3, aes(no_markers, fill = div_inc, colour = div_inc)) +
+  ggplot(df2, aes(no_markers, fill = div_inc, colour = div_inc)) +
   geom_density(alpha = 0.5, color = NA) +
-  scale_x_continuous(name = "Number of markers",  trans = "log10") +
+  scale_x_continuous(name = "Total number of markers",  trans = "log10") +
   scale_y_continuous(expand = c(0, 0)) +
-  scale_fill_discrete(labels = c("No effect", "Effect"))
+  scale_fill_discrete(labels = c("No effect", "Effect")) +
+  theme(legend.position = "none") +
+  annotate(geom="text", x=1, y=1.575, label="(c)",size=6)
 
 p5
 
-ggsave("figures/densities_markers.png",
-       width = 20,
-       height = 12,
-       units = 'cm')
-
+#number of measurements
+length(na.omit(df2$no_markers))
 
 ###
 #arrange plots together
 ###
 
-p1 | p2 / p3 | p4 / p5
+p1 | p2 / p3 | p5 / p4
 
 ggsave("figures/densities_all.png",
-       width = 20,
-       height = 12,
+       width = 30,
+       height = 20,
        units = 'cm')
-
-###
-# scatterplot of sampling fraction vs total number of species in clade
-###
-
-theme_set(theme_classic())
-options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[3]))
-
-df3$tips/(df3$perc_sampling/100)
-
-df3[df3$div_inc==1,]
-
-#tip number / sampling fraction = total number of taxa in clade of interest
-#sampling fraction vs tip number
-ggplot(df3, aes(x = perc_sampling, y = tips/(perc_sampling/100), color = div_inc)) +
-  geom_point(alpha = 0.5, size = 2.5) +
-  geom_smooth(method = lm, linetype = "dashed", aes(fill = div_inc)) +
-  scale_x_continuous(name = "Sampling fraction (%)") +
-  scale_y_continuous(name = "Total number of species in study group", trans='log10') +
-  theme(
-    legend.key = element_blank(),
-    legend.title = element_blank(),
-    legend.background = element_blank(),
-    legend.text = element_text(size = 10),
-    legend.position = "none",
-    panel.grid.minor = element_line(),
-    panel.grid.major = element_line()
-  )
-
-ggsave(
-  "figures/scatterplot_sampling_total_species.png",
-  width = 20,
-  height = 12,
-  units = 'cm'
-)

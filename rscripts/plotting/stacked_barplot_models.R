@@ -17,7 +17,6 @@ df <-
 #unique combinations of study/order
 df_mod <- unique(df[c("study", "sse_model", "year")])
 
-
 #get counts of model use per year
 ym <- df_mod %>%
   dplyr::count(year, sse_model, .drop = F)
@@ -32,60 +31,48 @@ ym2 <-
   mutate(n = ifelse(is.na(n), 0, n)) %>%
   arrange(year, sse_model)
 
-# Plot stacked area chart
-ggplot(ym2, aes(x = year, y = n, fill = sse_model)) +
-  geom_area(alpha = 0.6 ,
-            size = .5,
-            colour = "white") +
-  scale_fill_viridis(discrete = T) +
-  theme_ipsum() +
-  ggtitle("-SSE model use over time")
-
-#
-ggplot(ym2, aes(x = year, y = n, fill = sse_model)) +
-  geom_area()
-
-###
-#  streamgraph
-###
-library(streamgraph)
-# Basic stream graph: just give the 3 arguments
-pp <-
-  streamgraph(
-    ym2,
-    key = "sse_model",
-    value = "n",
-    date = "year",
-    interactive = F,
-    offset = "zero",
-    interpolate = "cardinal"
-  )
-
-pp %>%
-  sg_axis_x(1, "year", "%Y") %>%
-  sg_fill_tableau("cyclic")
+head(ym2)
 
 ###
 # stacked barplot
 ###
 
-#get counts of studies per year
+#colors
+library(RColorBrewer)
+colourCount <- length(unique(ym2$sse_model))
+getPalette <- colorRampPalette(brewer.pal(12, "Paired"))
+pal <- getPalette(colourCount)
+
+#count by studies per year
 ys <- df_mod %>%
   dplyr::count(study, year, .drop = F)
+head(ys)
+
+#make a df of the number of studies per year
 df_ys <- data.frame(table(ys$year))
+head(df_ys)
+
+#format year
 df_ys$Var1 <- as.numeric(as.character(df_ys$Var1))
 str(df_ys)
 
+#remove line from 2021
+df_ys<-df_ys[c(1:(length(df_ys$Freq)-1)),]
+
 ggplot(ym, aes(y = n, x = year)) +
-  geom_bar(aes(fill = sse_model), position = "stack", stat = "identity") +
-  scale_y_continuous(breaks = seq(0, 70, by = 5), expand = expansion(mult = c(0, .1))) +
-  scale_x_continuous(breaks = seq(2007, 2020, by = 1)) +
+  geom_bar(aes(fill = sse_model), position = "stack", stat = "identity",alpha=0.9) +
+  scale_y_continuous(breaks = seq(0, 30, by = 5), expand = expansion(mult = c(0, .1))) +
+  scale_x_continuous(breaks = seq(2009, 2021, by = 1)) +
   xlab("Publication year") +
-  ylab("Frequency of model use") +
+  ylab("No. of studies using model") +
+  scale_fill_manual(values = pal) +
   theme(
     # remove the vertical grid lines
     text = element_text(size = 11),
-    axis.title = element_text(size = 12),
+    legend.title = element_blank(),
+    legend.position="right",
+    axis.title = element_text(size = 16),
+    axis.text = element_text(size = 12),
     panel.grid.major.x = element_blank(),
     panel.grid.minor.x = element_blank(),
     # explicitly set the horizontal lines (or they will disappear too)
@@ -102,19 +89,22 @@ ggplot(ym, aes(y = n, x = year)) +
     data = df_ys,
     aes(x = Var1, y = Freq, group = 1),
     size = 1,
-    color = "black"
+    color = "black",
+    alpha = 0.75
   ) +
   geom_point(
     data = df_ys,
     aes(x = Var1, y = Freq, group = 1),
     size = 2,
-    color = "black"
+    color = "black",
+    alpha = 0.75
   )
 
 # variable widths not possible in ggplot2 without geom_rect() craziness
 ggsave(
   "figures/stacked_barplot_models.png",
-  width = 20,
-  height = 12,
+  width = 24,
+  height = 16,
   units = 'cm'
 )
+

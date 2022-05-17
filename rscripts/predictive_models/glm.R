@@ -1,114 +1,63 @@
+####
+# Predicting SSE model results with xgboost
+####
+
 rm(list = ls())
 
-#library(ISLR)
+library(xgboost)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(Matrix)
+library(caret)
+library(mlr)
 
 #read in data
 df <- read.csv("data/sse_review_table - main_table.csv")
 
-#only keep columns we want in the model
+#check col names
+colnames(df)
+
+#choose the columns you want in model (plus study/model_no for formatting)
 df <-
   df[, c(
     'study',
     'model_no',
+    'year',
     'order',
-    'trait_type_1',
+    'family',
+    'level',
+    #    'clade',
+    'trait_level_1',
+    'trait_level_2',
+    'trait_level_3',
+    'trait_level_4',
+    'trait_level_5',
+    'trait_level_6',
     'sse_model',
     'tips',
-    'year',
-    'no_markers',
     'age',
     'age_inferred',
-    'div_inc',
+    'no_markers',
     'no_plastid',
     'no_mito',
     'no_nuclear',
     'perc_sampling',
-    'samples_per_state'
+    'samples_per_state',
+    'putative_ancestral_state',
+    'div_inc'
   )]
+
 
 ###
 # Data transformations
 ###
 
-# NUMBER OF MARKERS
-#log no_markers as long tail
-hist(df$no_markers)
-df$no_markers <- log(df$no_markers)
-hist(df$no_markers)
-
-#NUMBER OF TIPS
-#log tips as long tail
-hist(df$tips)
-df$tips <- log(df$tips)
-hist(df$tips)
-
-#AGE OF TREE
-#log age as long tail
-#still strange
-hist(df$age)
-df$age <- log(df$age)
-hist(df$age)
-
-#GLOBAL SAMPLING FRACTION
-hist(df$perc_sampling)
-
-#arcsine
-df$perc_sampling<-asin(sqrt(df$perc_sampling))
-hist(df$perc_sampling)
-
-#SAMPLES PER STATE
-#change to numeric prior to transformation, remove NAs
-df$samples_per_state <- as.numeric(df$samples_per_state)
-
-#fix one study (Sabath et al.) with 0
-df$samples_per_state[df$samples_per_state==0] <- NA
-
-#log transform
-hist(df$samples_per_state)
-df$samples_per_state<-log(df$samples_per_state)
-hist(df$samples_per_state)
-
-df$samples_per_state[is.na(df$samples_per_state)] <- 0
-
-#remove quasse for div_inc
-#may need to remove others too
-df<-df[df$sse_model!="QuaSSE",]
-
-####
-#reformat data
-####
-
-#factors
-df$order <- as.factor(df$order)
-df$trait_type <- as.factor(df$trait_type)
-df$sse_model <- as.factor(df$sse_model)
-df$year <- as.character(df$year)
-
-####
-# Check correlation of continuous vars
-####
-
-df_cor <-
-  df[, c(
-    'tips',
-    'no_markers',
-    'age',
-    'no_plastid',
-    'no_mito',
-    'no_nuclear',
-    'perc_sampling',
-    'samples_per_state'
-  )]
-
-cor(df_cor)
-
 ###
 # Make samples per state into tip bias
 ###
 
-df$samples_per_state
-
-#make column with combination of study and model
+#make column with combination of study and model (make sure they are rows 1 and 2)
 tmp_df <- df %>% tidyr::unite("study_model", 1:2, remove = T)
 
 #reduce dataset to two columns
@@ -132,30 +81,72 @@ df3 <- df %>%
   group_by(study, model_no) %>%
   dplyr::slice(which.max(div_inc))
 
+#set Multi-State results to 1
+df3$div_inc[df3$div_inc > 1] <- 1
+
 #make binary trait factor
 df3$div_inc <- as.factor(df3$div_inc)
-
-#make sampling fraction %
-df3$perc_sampling <- df3$perc_sampling * 100
 
 #add tip bias column by dividing larger number of tips with state A by smaller number of tips with state B
 #multi-state models are therefore largest tip bias possible in the data
 df3$tip_bias <- top_df$samples_per_state / bot_df$samples_per_state
 
-#ERR: infinite values
-#QUICK FIX: make NaN
-df3$tip_bias[is.infinite(df3$tip_bias)]<-NaN
+#get rid of inf tip bias value
+df3<-df3[!is.infinite(df3$tip_bias),]
 
 #convert back to df
 df <- as.data.frame(df3)
 
+# NUMBER OF MARKERS
+#log no_markers as long tail
+hist(df$no_markers)
+df$no_markers <- log(df$no_markers)
+hist(df$no_markers)
+
+#NUMBER OF TIPS
+#log tips as long tail
+hist(df$tips)
+df$tips <- log(df$tips)
+hist(df$tips)
+
+#AGE OF TREE
+#log age as long tail
+#still strange
+hist(df$age)
+df$age <- log(df$age)
+hist(df$age)
+
+#GLOBAL SAMPLING FRACTION
+hist(df$perc_sampling)
+#arcsine
+df$perc_sampling <- asin(sqrt(df$perc_sampling))
+hist(df$perc_sampling)
+
+#SAMPLES PER STATE
+#change to numeric prior to transformation, remove NAs
+df$samples_per_state <- as.numeric(df$samples_per_state)
+
+#make sure factors are factors
+df$order <- as.factor(df$order)
+df$sse_model <- as.factor(df$sse_model)
+df$year <- as.factor(df$year)
+df$putative_ancestral_state <- as.factor(df$putative_ancestral_state)
+
 #remove study and model no (first two rows)
-df <- df[, -which(colnames(df)%in%c('study',
-                                    'model_no',
-                                    'samples_per_state'))]
+#sampling per state various among rows in models, should remove as well.
+df <- df[, -which(colnames(df) %in% c('study',
+                                      'model_no',
+                                      'samples_per_state'))]
+
+#remove quasse for div_inc
+#may need to remove others too
+#df <- df[df$sse_model != "QuaSSE", ]
 
 #ensure age inferred categorical
 df$age_inferred <- ifelse(df$age_inferred == 1, 'yes', 'no')
+
+#droplevels
+df<-droplevels(df)
 
 ##missing data causes predict to give reduced number
 df[is.na(df)] <- 0
@@ -163,7 +154,24 @@ df[is.na(df)] <- 0
 # Logistic Regression
 glm.fit <-
   glm(
-    div_inc ~ order + trait_type + sse_model + tips + year + no_markers + age + age_inferred + no_plastid + no_mito + no_nuclear + perc_sampling + tip_bias,
+    div_inc ~
+      #order +
+      trait_level_1 +
+      trait_level_2 +
+      #trait_level_3 +
+      #trait_level_4 +
+      #trait_level_5 +
+      sse_model +
+      tips +
+      #year +
+      no_markers +
+      age +
+      #age_inferred +
+      #no_plastid +
+      #no_mito +
+      #no_nuclear +
+      perc_sampling +
+      tip_bias,
     data = df,
     family = binomial
   )

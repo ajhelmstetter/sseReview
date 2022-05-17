@@ -1,0 +1,41 @@
+CB: 
+
+Thank you for this new version of the SSE review! I really like the way you have changed the discussion. Aside from the much brighter tone, it has the potential to be actually useful for future studies. It sets where the field is and the directions it may want to / can go. Nice!
+
+I have some minor comments on particular points of the text. Some I write below, while others I will write on the overleaf before lunch (I will check if others have already spotted the same things so it isn't necessary to write them again).
+
+- The results for the sampling fraction are  really puzzling (and a bit disturbing to me). On top of the possible explanations that you discuss in the results and discussion sections, I was wondering if the non-random choice of taxa to analyse may be affecting the results. Ie. if people choose the taxa to target specific traits or questions (based on informed priori info), and this happens more often for small datasets, can this have the effect of getting more frequently an effect (a true effect, not false positive)? putting this in another way, can lower sample size correspond more often to a choice of taxa "better suited" for the specific study question?
+
+- In Fig 4 I would like to know the number of models that have been used for each plot. They should be at least 213, but different for each property, am I right? could this info be stated somewhere, in the legend may be? Also, what is the scale of the y axis? I would prefer to see it, but if you think it is not necessary at all, it's fine.
+
+DS: 
+
+Thanks for the chance to re-read the SSE review.  It reads well now and is a nice compilation.  I do not have much to add, just a couple of minor points.
+
+In the Data Collection section of the Methods, for the 27 dataset properties, you are not clear on how many times it was necessary to consult authors. I was thinking that since one of the goals of this review is to make suggestions about standardization of reporting, etc., you could be specific here (or elsewhere in the paper about what sorts of problems arose that made this necessary). This is along the lines of Jorg’s suggestion last week.
+
+In the Results section, you mention which families are well represented in papers using SSE models, but you leave it to the reader to sort through Fig. S2 to determine which families are underrepresented, and so the (to me) surprising dearth of papers dealing with the Asteraceae is hidden.
+
+I’m wondering whether you think the Gentry paper on epiphytes might be worth working into the Discussion. He seemed to be onto something there. I wonder what he would have to say about SSE approaches if he were still alive today.
+
+SO: 
+
+* Trimming - The discussion is very long, and I’ve suggested places that could be cut/trimmed.  Sometimes, the Discussion mentions results that were not in the results section, so I suggest moving them out of the discussion.  The discussion is almost half of the words of the text, and this felt imbalanced.
+
+* Data collation - I was a bit confused about how papers analyzing multiple clades were handled.  For example, if only BiSSE was used but on several clades, how was it included in figure 2 - if any one clade showed a significant effect? if they all did? or if there was some evidence from the group of clades of an effect?  I think a separate paragraph on multiple clade analyses would be useful, both in summarizing how often this is attempted and in the best practices section (see next few comments).
+
+* SSE’s and false positives - The term “false positive” has been used by others but is inappropriate. The problem is not the false positive rate when the null hypothesis is true (no heterogeneity in diversification). The problem is spurious signals coming from other sources of heterogeneity.  It’s important to describe this correctly because otherwise people might think that a better statistical test would do the trick, but it’s not about the accuracy of the test when the null hypothesis is true, but that the test is applied to real world data where a lot more is going on.
+
+* SSE’s and clade size - I have a pretty different attitude about best practices than the one that emerges from the current paper. Imagine a clade with 2000 species that has 10 clades of 100 species.  I would MUCH prefer analyzing the 10 clades independently and looking for a signal of a trait-dependent effect on diversification repeated across the clades, even though that breaks the 300 rule of Davis et al. The reason is that if you run one analysis, it is very sensitive to other things happening at the scale of the large clade, including shifts in diversification and also shifts in the molecular clock (Shafir et al.).  While HiSSE helps, it typically only allows one other binary trait to mop up any other signals of shifting diversification rates.  The larger the clade, the more likely the history is more complex than even HiSSE can handle.
+
+* SSE’s and clade size - In a related way, I don’t think we should emphasize the 50% rule for clade sample size.  If the focus is on diversification rates, sampling fractions down to 20% have almost the same power (fig below from FitzJohn et al. 2009). Even below this, power tends to drop but the method isn’t misleading (one just gets non-signficant results).  What one loses by sub-sampling is mainly tip data, which is critical information for distinguishing speciation and extinction rate differences. Again, I think that there is an advantage of gathering independent data from multiple clades, and this is much easier if we accept that some won’t be well sampled.
+
+
+
+* I also think that the language needs to be softer when it comes to reporting “inconsistent” results.  The manuscript uses that term to refer to cases where some of the results are significant and some are not, but this is not “inconsistency" but simply an expected outcome of statistical tests.  We often use tests that have limited power to detect a result.  Whenever power = 1-beta is less than one, some fraction of results will be non-significant (beta).  This is an expected outcome of tests with limited power.
+
+* The manuscript notes on p. 18 that there is a negative correlation between sample %  and clade size and that this remains even among those studies finding a significant result, but I disagree that this indicates that “sampling fraction alone is responsible for this pattern” [= whether results are significant or not].  Indeed, large clades are by necessity harder to sample fully (some of these clades are groups with more than 100,000 species!!), but such large groups can contain plenty of information (more power).  As the figure above illustrates, sampling doesn’t have much impact on power.  So I interpret figure S12 differently: small clades with low sampling fraction are missing (should never be studied) and large clades with high sampling are impossible, causing the bottom left and top right of this figure to be missing;  whether results are significant or not depends a lot on the trait examined (not graphed), explaining why the lines are largely overlapping.
+
+* Figure 5 is hard to interpret - the labels need to be larger and better explained.  Also the sign of the effects aren’t obvious: does MuSSE increase or decrease the % of significant results?  Does tip bias really have a positive effect?
+
+* We recommend stochastic character mapping, but this cannot generally be done with SSE models, except using the forward-time method of Freyman and Hohna (2019), which I think is only available in RevBayes.   We could mention that paper on page 30 and maybe explain why ancestral state reconstructions are challenging for traits that affect the tree (because one has to model events off of the tree as well as on the tree).

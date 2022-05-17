@@ -1,8 +1,6 @@
-
 ###
 # scatterplot of sampling fraction vs total number of species in clade
 ###
-
 
 #Library
 library(tidyverse)
@@ -10,6 +8,7 @@ library(ggplot2)
 library(treemapify)
 library(RColorBrewer)
 library(ggrepel)
+library(ggpubr)
 
 # theme
 my_theme = theme(
@@ -46,30 +45,53 @@ df <-
 df <-
   df[, c(
     'study',
+    'model_no',
     'div_inc',
+    'trait_level_1',
     'perc_sampling',
     'tips'
   )]
 
+#make div_inc values > 1 (multistate models) = 1
+df$div_inc[df$div_inc>1]<-1
+table(df$div_inc)
+
 #set div_inc to factor for plotting
 df$div_inc<-as.factor(df$div_inc)
 
-#remove rows with NA
-df<-na.omit(df)
+#reduce to a single binary result per model per study
+df <- df %>%
+  group_by(study, model_no) %>%
+  dplyr::slice(which.max(div_inc))
+
+#lm of trait-dependent results
+summary(lm(log(tips/perc_sampling) ~ asin(sqrt(perc_sampling)), data = df[df$div_inc == 1, ]))
+
+#lm of non-trait-dependent results
+summary(lm(log(tips/perc_sampling) ~ asin(sqrt(perc_sampling)), data = df[df$div_inc == 0, ]))
+
+#theme
+theme_set(my_theme)
+
+#color
+options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[3]))
+options(ggplot2.discrete.colour = c("#999999", brewer.pal(5,"Set2")[3]))
 
 #tip number / sampling fraction = total number of taxa in clade of interest
 #sampling fraction vs tip number
-ggplot(df, aes(x = perc_sampling, y = tips/(perc_sampling/100), color = div_inc)) +
-  geom_point(alpha = 0.5, size = 2.5) +
-  geom_smooth(method = lm, linetype = "dashed", aes(fill = div_inc)) +
-  scale_x_continuous(name = "Sampling fraction (%)") +
-  scale_y_continuous(name = "Total number of species in study group", trans='log10') +
+ggplot(df, aes(x = tips/(perc_sampling), y = asin(sqrt(perc_sampling)), color = as.factor(div_inc), shape = as.factor(div_inc))) +
+  geom_point(alpha = 0.8, size = 2.5) +
+  geom_smooth(method = lm, linetype = "dashed", aes(fill = as.factor(div_inc))) +
+  scale_x_continuous(name = "Total number of species in study group", trans='log10') +
+  scale_y_continuous(name = "Sampling fraction (arcsine)",limits=c(0,1.75)) +
+  stat_regline_equation(label.y = 1.75, aes(label = ..rr.label..[1]),colour="#999999") +
+  stat_regline_equation(label.y = 1.7, aes(label = ..rr.label..[2])) +
   theme(
     legend.key = element_blank(),
     legend.title = element_blank(),
     legend.background = element_blank(),
     legend.text = element_text(size = 10),
-    legend.position = "none",
+    legend.position = "topright",
     panel.grid.minor = element_line(),
     panel.grid.major = element_line()
   )
@@ -77,20 +99,7 @@ ggplot(df, aes(x = perc_sampling, y = tips/(perc_sampling/100), color = div_inc)
 ggsave(
   "figures/scatterplot_sampling_total_species.png",
   width = 20,
-  height = 12,
+  height = 20,
   units = 'cm'
 )
 
-### 3d plot
-library(plotly)
-
-par(mar=c(5,5,5,5))
-fig<-plot_ly(x=log(df$perc_sampling), y=log(df$tips), z=log(df$tips)/log((df$perc_sampling/100)), type="scatter3d", mode="markers", color=df$div_inc)
-fig <- fig %>% layout(
-  scene = list(
-    xaxis = list(title = "sampling %"),
-    yaxis = list(title = "No. tips"),
-    zaxis = list(title = "Total species")
-  ))
-
-fig
