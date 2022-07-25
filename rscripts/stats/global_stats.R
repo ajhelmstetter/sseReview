@@ -3,6 +3,9 @@
 ###
 rm(list = ls())
 
+library(tidyr)
+library(dplyr)
+
 #read in data
 df <- read.csv("data/sse_review_table - main_table.csv")
 

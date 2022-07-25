@@ -149,9 +149,13 @@ p1 <-
   geom_density(alpha = 0.5, color = NA) +
   scale_x_continuous(name = "Number of tips",  trans = "log10") +
   scale_y_continuous(expand = c(0, 0)) +
-  scale_fill_discrete(labels = c("No effect", "Effect")) +
-  annotate(geom="text", x=10, y=1.26, label="(a)",size=6)
+  scale_fill_discrete(labels = c("No effect", "Effect"))# +
+  #annotate(geom="text", x=10, y=1.26, label="(a)",size=6)
 p1
+ggsave("figures/density_tips.png",
+       width = 15,
+       height = 10,
+       units = 'cm')
 
 #number of measurements
 length(na.omit(df2$tips))
@@ -164,12 +168,16 @@ p2 <- ggplot(df2, aes(age, fill = div_inc, colour = div_inc)) +
   scale_x_continuous(name = "Age of tree",  trans = "log10") +
   scale_y_continuous(expand = c(0, 0)) +
   scale_fill_discrete(labels = c("No effect", "Effect")) +
-  #theme(legend.position='top',
-  #      legend.justification='left',
-  #     legend.direction='vertical')
-  theme(legend.position = "none") +
-  annotate(geom="text", x=1, y=1.48, label="(b)",size=6)
+  theme(legend.position='top',
+        legend.justification='left',
+       legend.direction='vertical')# +
+  #theme(legend.position = "none") +
+  #annotate(geom="text", x=1, y=1.48, label="(b)",size=6)
 p2
+ggsave("figures/density_age.png",
+       width = 15,
+       height = 10,
+       units = 'cm')
 
 #number of measurements
 length(na.omit(df2$age))
@@ -183,9 +191,16 @@ p3 <-
   scale_x_continuous(name = "Sampling fraction (%)") +
   scale_y_continuous(expand = c(0, 0),limits=c(0,0.02)) +
   scale_fill_discrete(labels = c("No effect", "Effect")) +
-  theme(legend.position = "none") +
-  annotate(geom="text", x=0, y=0.0195, label="(d)",size=6)
+  #theme(legend.position = "none") +
+  theme(legend.position='top',
+        legend.justification='left',
+        legend.direction='vertical')# +
+  #annotate(geom="text", x=0, y=0.0195, label="(d)",size=6)
 p3
+ggsave("figures/density_sampling.png",
+       width = 15,
+       height = 10,
+       units = 'cm')
 
 #number of measurements
 length(na.omit(df2$perc_sampling))
@@ -203,10 +218,18 @@ p4 <- ggplot(df3, aes(tip_bias, fill = div_inc, colour = div_inc)) +
   scale_x_continuous(name = "Tip bias",  trans = "log10") +
   scale_y_continuous(expand = c(0, 0)) +
   scale_fill_discrete(labels = c("No effect", "Effect")) +
-  theme(legend.position = "none") +
-  annotate(geom="text", x=1, y=1.16, label="(e)",size=6)
+  #theme(legend.position = "none") +
+  theme(legend.position='top',
+        legend.justification='left',
+        legend.direction='vertical')# +
+#  annotate(geom="text", x=1, y=1.16, label="(e)",size=6)
 
 p4
+ggsave("figures/density_tipbias.png",
+       width = 15,
+       height = 10,
+       units = 'cm')
+
 
 #number of measurements
 length(na.omit(df2$tip_bias))
@@ -220,10 +243,17 @@ p5 <-
   scale_x_continuous(name = "Total number of markers",  trans = "log10") +
   scale_y_continuous(expand = c(0, 0)) +
   scale_fill_discrete(labels = c("No effect", "Effect")) +
-  theme(legend.position = "none") +
-  annotate(geom="text", x=1, y=1.575, label="(c)",size=6)
+  #theme(legend.position = "none") +
+  theme(legend.position='top',
+        legend.justification='left',
+        legend.direction='vertical')# +
+  #annotate(geom="text", x=1, y=1.575, label="(c)",size=6)
 
 p5
+ggsave("figures/density_markers.png",
+       width = 15,
+       height = 10,
+       units = 'cm')
 
 #number of measurements
 length(na.omit(df2$no_markers))
