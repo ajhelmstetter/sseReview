@@ -29,7 +29,7 @@ df$order <- as.factor(df$order)
 #unique combinations of study/order
 df_uni<- unique(df[c("study", "order")])
 
-#reduce to a single result per order per study
+#rearrange df to give value of 1 per order and study combination
 library(dplyr)
 so <-df_uni %>%
   dplyr::count(order, study, .drop = F)
@@ -53,13 +53,13 @@ ord_no<-ord_no[ord_no$order%in%ord_freq$order,]
 ord_no<-ord_no[order(ord_no$order),]
 head(ord_no)
 
-#get frequencies  for orders that are tested
+#get frequencies for orders that are tested
 ord_freq<-ord_freq[ord_freq$order%in%ord_no$order,]
 
 #check dfs are in same order
 ord_no$order==ord_freq$order
 
-#add frequency table to order species numbers table
+#add frequencies to order species numbers table
 ord_no$freq <- ord_freq$freq
 
 #read in order tree
@@ -67,9 +67,6 @@ ord_no$freq <- ord_freq$freq
 
 library(ape)
 phy<-read.nexus("data/2881_dating_Order.tre")
-
-#could read in ML tree
-#phy<-read.nexus("data/2881_ML_Order_bootstrap.tre")
 
 #drop non-angio tips
 phy<-drop.tip(phy,c("Cycadales",
@@ -90,7 +87,6 @@ phy<-drop.tip(phy,"'Asparagales1'")
 
 #keep only order and freq from studied, reorder
 stud<-ord_no[,c(1,3,2)]
-
 head(stud)
 
 #add 0's to unstudied orders
@@ -111,12 +107,14 @@ ord_no<-ord_no[ord_no$order%in%unstud$order,]
 #order alphabetically
 ord_no<-ord_no[order(ord_no$order),]
 
+#check matches
+ord_no$order==unstud$order
+
 #combine order freq and species numbers
 unstud<-cbind(ord_no,unstud)
 
 #reorder columns
 unstud<-unstud[,c(1,4,2)]
-
 head(unstud)
 
 #combine studied and unstudied dfs

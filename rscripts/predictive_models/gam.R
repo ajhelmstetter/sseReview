@@ -56,24 +56,20 @@ df <-
 # Make samples per state into tip bias
 ###
 
-#make column with combination of study and model (make sure they are rows 1 and 2)
-tmp_df <- df %>% tidyr::unite("study_model", 1:2, remove = T)
-
-#reduce dataset to two columns
-tmp_df <- tmp_df[, c("study_model", "samples_per_state")]
-
-head(tmp_df)
-
 #get max and min values of samples per state for each model
 top_df <-
-  tmp_df %>% group_by(study_model) %>% slice_max(n = 1,
-                                                 order_by = samples_per_state,
-                                                 with_ties = F)
-bot_df <-
-  tmp_df %>% group_by(study_model) %>% slice_min(n = 1,
+  df %>% group_by(study, model_no) %>% slice_max(n = 1,
                                                  order_by = samples_per_state,
                                                  with_ties = F)
 
+head(top_df)
+
+bot_df <-
+  df %>% group_by(study, model_no) %>% slice_min(n = 1,
+                                                 order_by = samples_per_state,
+                                                 with_ties = F)
+
+head(bot_df)
 
 #reduce to a single binary result per model per study
 df3 <- df %>%
@@ -84,14 +80,24 @@ df3 <- df %>%
 df3$div_inc[df3$div_inc > 1] <- 1
 
 #make binary trait factor
-df3$div_inc <- as.factor(df3$div_inc)
+#df3$div_inc <- as.factor(df3$div_inc)
+
+#check that orders of df2 and top/bot_df match up
+top_df$study==bot_df$study
+top_df$model_no==bot_df$model_no
+
+df3$model_no==bot_df$model_no
+df3$model_no==top_df$model_no
+
+df3$study==bot_df$study
+df3$study==top_df$study
 
 #add tip bias column by dividing larger number of tips with state A by smaller number of tips with state B
 #multi-state models are therefore largest tip bias possible in the data
 df3$tip_bias <- top_df$samples_per_state / bot_df$samples_per_state
 
 #get rid of inf tip bias value
-df3<-df3[!is.infinite(df3$tip_bias),]
+df3$tip_bias[is.infinite(df3$tip_bias)] <- NA
 
 #convert back to df
 df <- as.data.frame(df3)
@@ -126,25 +132,18 @@ hist(df$tip_bias)
 df$tip_bias<- log(df$tip_bias)
 hist(df$tip_bias)
 
-#SAMPLES PER STATE
-#change to numeric prior to transformation, remove NAs
-df$samples_per_state <- as.numeric(df$samples_per_state)
-
 #make sure factors are factors
 df$order <- as.factor(df$order)
 df$sse_model <- as.factor(df$sse_model)
 df$year <- as.factor(df$year)
 df$putative_ancestral_state <- as.factor(df$putative_ancestral_state)
+df$div_inc <- as.factor(df$div_inc)
 
 #remove study and model no (first two rows)
 #sampling per state various among rows in models, should remove as well.
 df <- df[, -which(colnames(df) %in% c('study',
                                       'model_no',
                                       'samples_per_state'))]
-
-#remove quasse for div_inc
-#may need to remove others too
-#df <- df[df$sse_model != "QuaSSE", ]
 
 ####
 # Check correlation of continuous vars
@@ -161,25 +160,9 @@ df_cor <-
 
 cor(df_cor, use = "complete.obs")
 
-#remove no_markers outlier
-df<-df[df$no_markers<10,]
-
-#scale the data
-#for (i in 1:length(df[1, ])) {
-#  if (is.numeric(df[, i])) {
-#    df[, i] <- scale(df[, i])
-#  }
-#}
-
-#can include ordinal vars
-#ordinal variable : can take a limited number of values (like factor) ;
-#these values are ordered (unlike factor). Here these ordered values are: Marked > Some > None
-#GOOD FOR MUSSE?
-
-#One-hot encoding
-#Next step, we will transform the categorical data to dummy variables. This is the one-hot encoding step.
-#The purpose is to transform each value of each categorical feature in a binary feature {0, 1}.
-#Response is excluded because it will be our label column, the one we want to predict.
+#NOT NEEDED:
+#remove no_markers outliers
+#df$no_markers[df$no_markers>10] <- NA
 
 #####
 # Replacing NAs
@@ -211,17 +194,11 @@ library(mgcv)
 
 #make GAM
 mongam <- gam(data = df_nums, div_inc ~
-                #sse_model +
-                #putative_ancestral_state +
-                #trait_level_1 +
-                #s(tips, k = 4, bs = "cr", by = sse_model ) + ## ca c'est si tu veux faire une interaction
-                #s(perc_sampling, k = 3, bs = "cr", by = tip_bias) +
-                #ti(perc_sampling, tip_bias, k = 5, bs = "cr") + ##interaction between continuous variables
                 s(tips, k = 5, bs = "cr")
               + s(age, k = 5, bs = "cr")
               + s(no_markers, k = 5, bs = "cr")
-              + s(perc_sampling, k = 5, bs = "cr")
               + s(tip_bias, k = 5, bs = "cr")
+              + s(perc_sampling, k = 5, bs = "cr")
                 ,
                 family = binomial())
 
@@ -245,13 +222,15 @@ dev.off()
 # GAM each var separately
 ####
 
-png("figures/gam_indvars_mean.png",width = 1000,height=500)
+png("figures/gam_indvars.png",width = 1000,height=500)
 
 par(mfrow=c(2,3))
 par(mar=c(5,5,3,1))
 
+#df3 is
+
 #tips
-mongam <- gam(data = df,
+mongam <- mgcv::gam(data = df,
               div_inc ~
               s(tips, k = 5, bs = "cr"),
               family = binomial()
@@ -271,6 +250,7 @@ plot.gam(mongam,ylim=c(-2,2),cex.lab=1.75,cex.axis=1.75)
 mtext("(b)",side=3,line=1,adj = -0.15)
 
 #number of markers
+#one less than density because removed outlier
 mongam <- gam(data = df,
               div_inc ~
               s(no_markers, k = 5, bs = "cr"),
@@ -280,6 +260,17 @@ summary(mongam)
 plot.gam(mongam,ylim=c(-2,2),cex.lab=1.75,cex.axis=1.75)
 mtext("(c)",side=3,line=1,adj = -0.15)
 
+#tip bias
+#two infinite that are removed
+mongam <- gam(data = df,
+              div_inc ~
+              s(tip_bias, k = 5, bs = "cr"),
+              family = binomial()
+)
+summary(mongam)
+plot.gam(mongam,ylim=c(-2,2),cex.lab=1.75,cex.axis=1.75)
+mtext("(d)",side=3,line=1,adj = -0.15)
+
 #sampling fraction
 mongam <- gam(data = df,
               div_inc ~
@@ -288,18 +279,6 @@ mongam <- gam(data = df,
 )
 summary(mongam)
 plot.gam(mongam,ylim=c(-2,2),cex.lab=1.75,cex.axis=1.75)
-mtext("(d)",side=3,line=1,adj = -0.15)
-
-
-#tip bias
-mongam <- gam(data = df,
-              div_inc ~
-              s(tip_bias, k = 5, bs = "cr"),
-              family = binomial()
-)
-summary(mongam)
-plot.gam(mongam,ylim=c(-2,2),cex.lab=1.75,cex.axis=1.75)
 mtext("(e)",side=3,line=1,adj = -0.15)
-
 
 dev.off()

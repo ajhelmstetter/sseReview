@@ -35,23 +35,18 @@ df3 <- df %>%
   group_by(study, model_no) %>%
   dplyr::slice(which.max(div_inc))
 
-theme_set(theme_minimal())
-
-#remove models where density cant be calculated
-remove.list <-
-  paste(c("SecSSE", "MuHiSSE", "MiSSE", "BiSSEness"), collapse = '|')
-df4 <- df3 %>% filter(!grepl(remove.list, sse_model))
-
 #remove year where density cant be calculated
-df5 <- df4 %>% filter(!grepl("2010", year))
+df4 <- df3 %>% filter(!grepl("2010", year))
 
 #####
 # Tips vs publication year
 #####
 
+theme_set(theme_minimal())
+
 options(ggplot2.discrete.fill = brewer.pal(11, "RdYlBu"))
 
-ggplot(df5, aes(
+ggplot(df4, aes(
   x = tips,
   y = year,
   group = year,
@@ -93,7 +88,7 @@ ggsave(
 
 options(ggplot2.discrete.fill = brewer.pal(11, "PiYG"))
 
-ggplot(df5, aes(
+ggplot(df4, aes(
   x = perc_sampling,
   y = year,
   group = year,

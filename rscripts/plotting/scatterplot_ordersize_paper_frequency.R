@@ -8,6 +8,7 @@ library(ggplot2)
 library(treemapify)
 library(RColorBrewer)
 library(ggrepel)
+library(dplyr)
 
 # theme
 my_theme = theme(
@@ -45,34 +46,32 @@ df <-
   df[, c(
     'study',
     'order',
-    'trait_type_1',
-    'trait_type_2'
+    'trait_level_1',
+    'trait_level_2'
   )]
 
 #make sure columns are the right type
 df$order <- as.factor(df$order)
 
 #unique combinations of study/order
-df_uni<- unique(df[c("study", "order")])
+so <- unique(df[c("study", "order")])
 
+#redundant
 #reduce to a single result per order per study
-library(dplyr)
-so <-df_uni %>%
-  dplyr::count(order, study, .drop = T)
-so
+#
+#so <-df_uni %>%
+#  dplyr::count(order, study, .drop = T)
+#so
 
 #get frequency table
 ord_freq<-data.frame(table(so$order))
 colnames(ord_freq)<-c("order","freq")
 
-# Number of species per order (I extracted a few years ago from the APG website @ mobot):
+# Number of species per order (JK extracted a few years ago from the APG website @ mobot):
 # https://www.mobot.org/mobot/research/apweb/orders/boraginalesweb.htm
 
 #read in data
 ord_no<-read.csv("data/species_per_order.csv")
-
-#not studied
-ord_no[ord_no$order%in%setdiff(ord_no$order,ord_freq$order),]
 
 #get overlapping data in each dataset
 ord_no<-ord_no[ord_no$order%in%ord_freq$order,]
@@ -96,7 +95,7 @@ theme_set(my_theme)
 ggplot(ord_no, aes(x = no_species, y = freq)) +
   geom_point(alpha = 0.5, size = 2.5) +
   scale_x_continuous(name = "Number of species in order",labels = scales::comma) +
-  scale_y_continuous(name = "Number of papers with order")  +
+  scale_y_continuous(name = "Number of studies on clades in order")  +
   geom_text_repel(aes(label=ifelse(freq>5,as.character(order),'')))
 
 ggsave("figures/scatterplot_orders_species_papers.png",

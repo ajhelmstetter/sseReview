@@ -8,6 +8,7 @@ library(ggplot2)
 library(treemapify)
 library(RColorBrewer)
 library(ggrepel)
+library(dplyr)
 
 # theme
 my_theme = theme(
@@ -53,29 +54,31 @@ df <-
 df$family <- as.factor(df$family)
 
 #unique combinations of study/family
-df_uni<- unique(df[c("study", "family")])
+df_uni <- unique(df[c("study", "family")])
 
 #drop 'Multiple'
-df_uni <- df_uni %>% filter(!grepl("Multiple", family))
+so <- df_uni %>% filter(!grepl("Multiple", family))
 
+#redundant
 #reduce to a single result per family per study
-library(dplyr)
-so <-df_uni %>%
-  dplyr::count(family, study, .drop = T)
-so$family
+#
+#so <-df_uni %>%
+#  dplyr::count(family, study, .drop = T)
+#so$family
 
 #get frequency table
 fam_freq<-data.frame(table(so$family))
 colnames(fam_freq)<-c("family","freq")
 fam_freq
 
-#drop 'Multiple'
+#drop 'Multiple' level that was put in
 fam_freq <- fam_freq %>% filter(!grepl("Multiple", family))
 
 #read in data from Cristenhuiz paper
+#number of angio families = 416
 fam_no<-read.csv("data/species_per_family.csv")
 
-#not studied
+#families not studied but with many species
 not_studied<-fam_no[fam_no$family%in%setdiff(fam_no$family,fam_freq$family),]
 head(not_studied[order(not_studied$no_species,decreasing = T),])
 
@@ -83,6 +86,7 @@ head(not_studied[order(not_studied$no_species,decreasing = T),])
 fam_no<-fam_no[fam_no$family%in%fam_freq$family,]
 fam_no<-fam_no[order(fam_no$family),]
 head(fam_no)
+str(fam_no)
 
 #check match
 fam_freq$family==fam_no$family
@@ -97,7 +101,7 @@ theme_set(my_theme)
 ggplot(fam_no, aes(x = no_species, y = freq)) +
   geom_point(alpha = 0.5, size = 2.5) +
   scale_x_continuous(name = "Number of species in family", labels = scales::comma) +
-  scale_y_continuous(name = "Number of papers on family") +
+  scale_y_continuous(name = "Number of studies on clades in family") +
   geom_text_repel(aes(label=ifelse(freq>1,as.character(family),'')))
 
 ggsave("figures/scatterplot_families_species_papers.png",

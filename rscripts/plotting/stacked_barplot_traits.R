@@ -38,12 +38,12 @@ df <- df %>%
   group_by(study, model_no) %>%
   dplyr::slice(which.max(div_inc))
 
+#set Multi-State results to 1
+df$div_inc[df$div_inc > 1] <- 1
+
 ####
 # TRAIT LEVEL 2
 ####
-
-#set Multi-State results to 1
-df$div_inc[df$div_inc > 1] <- 1
 
 #count numbers of 0 and 1 per trait
 df2 <- df %>% group_by(trait_level_2, div_inc, .drop=FALSE) %>% summarize(count=n()) %>% ungroup() %>% complete(trait_level_2, div_inc, fill = list(count = 0))
@@ -62,7 +62,7 @@ l2<-ggplot(df2, aes(fill=div_inc, y=count, x=reorder(trait_level_2, -count))) +
                      limits=c(0,180),
                      name ="Number of times tested") +
   scale_fill_discrete(labels = c("No effect", "Effect")) +
-  theme(axis.text.x = element_text(angle = 90,hjust = 1),
+  theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust=0.5),
         axis.ticks.x = element_blank(),
         axis.ticks.y = element_blank(),
         legend.title = element_blank(),
@@ -77,8 +77,8 @@ l2<-ggplot(df2, aes(fill=div_inc, y=count, x=reorder(trait_level_2, -count))) +
   coord_cartesian(clip = "off") +
   annotation_custom(
     grob = textGrob(label = "(a)", hjust = 0, gp = gpar(cex = 1)),
-    ymin = 180,      # Vertical position of the textGrob
-    ymax = 180,
+    ymin = 175,      # Vertical position of the textGrob
+    ymax = 175,
     xmin = -1,         # Note: The grobs are positioned outside the plot area
     xmax = -1)
 
@@ -94,6 +94,22 @@ df2 <- df %>% group_by(trait_level_4, div_inc, .drop=FALSE) %>% summarize(count=
 #make binary classification character
 df2$div_inc<-as.character(df2$div_inc)
 
+#Neaten up names
+
+df2$trait_level_4<-gsub("BreedingSystem","Breeding system",df2$trait_level_4)
+df2$trait_level_4<-gsub("ChromosomeNumber","Chromosome number",df2$trait_level_4)
+df2$trait_level_4<-gsub("FlowerMorpho","Flower morpho.",df2$trait_level_4)
+df2$trait_level_4<-gsub("FruitMorpho","Fruit morpho.",df2$trait_level_4)
+df2$trait_level_4<-gsub("GeographicRange","Geographic range",df2$trait_level_4)
+df2$trait_level_4<-gsub("LeafMorpho","Leaf morpho.",df2$trait_level_4)
+df2$trait_level_4<-gsub("LifeForm","Life form",df2$trait_level_4)
+df2$trait_level_4<-gsub("LifeSpan","Lifespan",df2$trait_level_4)
+df2$trait_level_4<-gsub("MorphoOther","Morpho. Other",df2$trait_level_4)
+df2$trait_level_4<-gsub("NutrientAcquisition","Nutrient acquisition",df2$trait_level_4)
+df2$trait_level_4<-gsub("PlantArchitecture","Plant architecture",df2$trait_level_4)
+df2$trait_level_4<-gsub("PlantSize","Plant size",df2$trait_level_4)
+df2$trait_level_4<-gsub("SeedMorpho","Seed morpho.",df2$trait_level_4)
+
 #colour
 options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[2]))
 
@@ -102,10 +118,10 @@ l4<-ggplot(df2, aes(fill=div_inc, y=count, x=reorder(trait_level_4, -count))) +
   geom_bar(position="stack", stat="identity",alpha=0.85) +
   scale_x_discrete(name ="Trait level 4 category") +
   scale_y_continuous(expand = c(0, 0),
-                     limits=c(0,100),
+                     limits=c(0,125),
                      name ="Number of times tested") +
   scale_fill_discrete(labels = c("No effect", "Effect")) +
-  theme(axis.text.x = element_text(angle = 90,hjust = 1),
+  theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust=0.5),
         axis.ticks.x = element_blank(),
         axis.ticks.y = element_blank(),
         legend.title = element_blank(),
@@ -120,8 +136,8 @@ l4<-ggplot(df2, aes(fill=div_inc, y=count, x=reorder(trait_level_4, -count))) +
   coord_cartesian(clip = "off") +
   annotation_custom(
     grob = textGrob(label = "(b)", hjust = 0, gp = gpar(cex = 1)),
-    ymin = 100,      # Vertical position of the textGrob
-    ymax = 100,
+    ymin = 125,      # Vertical position of the textGrob
+    ymax = 125,
     xmin = -3.5,         # Note: The grobs are positioned outside the plot area
     xmax = -3.5)
 
@@ -139,3 +155,7 @@ ggsave("figures/stacked_barplot_traits_2and4.png",
        height = 25,
        units = 'cm')
 
+ggsave("figures/stacked_barplot_traits_2and4.pdf",
+       width = 20,
+       height = 25,
+       units = 'cm')

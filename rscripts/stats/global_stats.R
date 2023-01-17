@@ -59,19 +59,42 @@ df <-
 df_uni<- unique(df[c("study", "clade")])
 
 #number of studies focusing on one clade only
-length(table(df_uni$study)[table(df_uni$study)==1])
+no_single<-length(table(df_uni$study)[table(df_uni$study)==1])
+
+#BUT some clades were nested:
+## Alcantara et al.
+## De Vos et al.
+## Ebersbach et al.
+## Forest et al.
+## Roalson & Roberts
+## Spriggs et al.
+no_single <- no_single + 6
+
+#BUT some clades were analysed separately in a single model?
+## Golberg et al. 2011
+## Anacker et al.
+no_single <- no_single - 2
+
+#BUT: some studies looked at multiple clades but could not be recorded this way (lack of info)
+## Mayrose et al.
+no_single <- no_single - 1
+
+#number of studies on a single clade
+no_single
+
+#on multiple clades
+152-no_single
 
 #####
 # Studies that look at a single trait_level_6
 #####
 
 #unique combinations of study and trait level 6
-#i.e. how many studies looked at different traits
+#i.e. each different trait examined in each study
 df_uni<- unique(df[c("study", "trait_level_6")])
 
-#number of studies that examined differents traits belonging to more than one trait_level_1 category
+#number of studies that examined traits belonging to a single trait_level_6 category
 length(table(df_uni$study)[table(df_uni$study)==1])
-
 
 #####
 # Studies that look at different traits
@@ -82,14 +105,16 @@ length(table(df_uni$study)[table(df_uni$study)==1])
 df_uni<- unique(df[c("study", "trait_level_1")])
 
 #number of studies that examined differents traits belonging to more than one trait_level_1 category
-length(table(df_uni$study)[table(df_uni$study)>1])
+tl1<-length(table(df_uni$study)[table(df_uni$study)>1])
 
+#+1 for onstein and linder who looked at trait_level_1 'combination' only
+tl1 + 1
 
 ####
 # Number of orders
 ####
 
-#remain anything that isn't order (e.g. 'multiple')
+#remove anything that isn't order (e.g. 'multiple')
 orders<-unique(df$order)[grep("ales",unique(df$order))]
 
 #list of orders studied
@@ -102,13 +127,13 @@ length(orders)
 # Number of families
 ####
 
-#remain anything that isn't order (e.g. 'multiple')
+#remain anything that isn't a family (e.g. 'multiple')
 families<-unique(df$family)[grep("ceae",unique(df$family))]
 
-#list of orders studied
+#list of families studied
 sort(families)
 
-#number orders studied
+#number families  studied
 length(families)
 
 
@@ -152,14 +177,13 @@ length(df_ext_uni$study) / 629
 # Proportion intrinsic that are associated with div inc
 #####
 
-#make > 1 MuSSE div_inc values 1
-df$div_inc[df$div_inc>1]<-1
-
 #reduce to a single binary result per model per study
 df2 <- df %>%
   group_by(study, model_no) %>%
   dplyr::slice(which.max(div_inc))
 
+#make > 1 MuSSE div_inc values 1
+df2$div_inc[df2$div_inc>1]<-1
 
 #df with only intrinsic traits
 df2_int<-df2[df2$trait_level_1=="Intrinsic",]
@@ -169,6 +193,9 @@ table(df2_int$div_inc)
 
 #proportion of models with intrinsic traits assoc with div_inc
 table(df2_int$div_inc)[2] / (table(df2_int$div_inc)[1] + table(df2_int$div_inc)[2])
+
+#proportion of total models run on intrinsic traits
+sum(table(df2_int$div_inc)) / length(df2$study)
 
 #####
 # Proportion extrinsic that are associated with div inc
@@ -182,6 +209,9 @@ table(df2_ext$div_inc)
 
 #proportion of models with extrinsic traits assoc with div_inc
 table(df2_ext$div_inc)[2] / (table(df2_ext$div_inc)[1] + table(df2_ext$div_inc)[2])
+
+#proportion of total models run on extrinsic traits
+sum(table(df2_ext$div_inc)) / length(df2$study)
 
 #####
 # Number of studies with hidden state models

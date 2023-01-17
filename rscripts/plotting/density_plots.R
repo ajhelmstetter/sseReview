@@ -1,6 +1,7 @@
 ###
 # Effect of data characteristics on inference of div rate change
 ###
+rm(list=ls())
 
 # Library
 #library(viridis)
@@ -77,25 +78,16 @@ df<-df[order(df$study),]
 #make samples per state into tip bias
 ####
 
-#make column with combination of study and model for easy categorization
-tmp_df <- df %>% tidyr::unite("study_model", 1:2, remove = T)
-
-#reduce dataset to two columns
-tmp_df <- tmp_df[, c("study_model", "samples_per_state")]
-head(tmp_df)
-
-tmp_df %>% group_by(study_model)
-
 #get max and min values of samples per state for each model
 top_df <-
-  tmp_df %>% group_by(study_model) %>% slice_max(n = 1,
+  df %>% group_by(study, model_no) %>% slice_max(n = 1,
                                                  order_by = samples_per_state,
                                                  with_ties = F)
 
 head(top_df)
 
 bot_df <-
-  tmp_df %>% group_by(study_model) %>% slice_min(n = 1,
+  df %>% group_by(study, model_no) %>% slice_min(n = 1,
                                                  order_by = samples_per_state,
                                                  with_ties = F)
 
@@ -127,9 +119,14 @@ df2$div_inc <- as.factor(df2$div_inc)
 df2$perc_sampling <- df2$perc_sampling * 100
 
 #check that orders of df2 and top/bot_df match up
-setdiff(top_df$study_model,bot_df$study_model)
-setdiff(bot_df$study_model,top_df$study_model)
-table(df2$study==gsub('(.*)_\\w+', '\\1',top_df$study_model))
+top_df$study==bot_df$study
+top_df$model_no==bot_df$model_no
+
+df2$model_no==bot_df$model_no
+df2$model_no==top_df$model_no
+
+df2$study==bot_df$study
+df2$study==top_df$study
 
 #add tip bias column by dividing larger number of tips with state A by smaller number of tips with state B
 #multi-state models are therefore largest tip bias possible in the data
@@ -148,14 +145,10 @@ p1 <-
   ggplot(df2, aes(tips, fill = div_inc, colour = div_inc)) +
   geom_density(alpha = 0.5, color = NA) +
   scale_x_continuous(name = "Number of tips",  trans = "log10") +
-  scale_y_continuous(expand = c(0, 0)) +
-  scale_fill_discrete(labels = c("No effect", "Effect"))# +
-  #annotate(geom="text", x=10, y=1.26, label="(a)",size=6)
+  scale_y_continuous(expand = c(0, 0),limits = c(0,1.5)) +
+  scale_fill_discrete(labels = c("No effect", "Effect")) +
+  annotate(geom="text", x=10, y=1.475, label="(a)",size=6)
 p1
-ggsave("figures/density_tips.png",
-       width = 15,
-       height = 10,
-       units = 'cm')
 
 #number of measurements
 length(na.omit(df2$tips))
@@ -165,19 +158,12 @@ options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[2]))
 #age
 p2 <- ggplot(df2, aes(age, fill = div_inc, colour = div_inc)) +
   geom_density(alpha = 0.5, color = NA) +
-  scale_x_continuous(name = "Age of tree",  trans = "log10") +
+  scale_x_continuous(name = "Age of tree (Ma)",  trans = "log10") +
   scale_y_continuous(expand = c(0, 0)) +
   scale_fill_discrete(labels = c("No effect", "Effect")) +
-  theme(legend.position='top',
-        legend.justification='left',
-       legend.direction='vertical')# +
-  #theme(legend.position = "none") +
-  #annotate(geom="text", x=1, y=1.48, label="(b)",size=6)
+  theme(legend.position = "none") +
+  annotate(geom="text", x=1, y=1.48, label="(b)",size=6)
 p2
-ggsave("figures/density_age.png",
-       width = 15,
-       height = 10,
-       units = 'cm')
 
 #number of measurements
 length(na.omit(df2$age))
@@ -191,16 +177,9 @@ p3 <-
   scale_x_continuous(name = "Sampling fraction (%)") +
   scale_y_continuous(expand = c(0, 0),limits=c(0,0.02)) +
   scale_fill_discrete(labels = c("No effect", "Effect")) +
-  #theme(legend.position = "none") +
-  theme(legend.position='top',
-        legend.justification='left',
-        legend.direction='vertical')# +
-  #annotate(geom="text", x=0, y=0.0195, label="(d)",size=6)
+  theme(legend.position = "none") +
+  annotate(geom="text", x=0, y=0.0195, label="(e)",size=6)
 p3
-ggsave("figures/density_sampling.png",
-       width = 15,
-       height = 10,
-       units = 'cm')
 
 #number of measurements
 length(na.omit(df2$perc_sampling))
@@ -216,23 +195,15 @@ df3<-df3[df3$tip_bias<100000,]
 p4 <- ggplot(df3, aes(tip_bias, fill = div_inc, colour = div_inc)) +
   geom_density(alpha = 0.5, color = NA) +
   scale_x_continuous(name = "Tip bias",  trans = "log10") +
-  scale_y_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0),limits = c(0,1.5)) +
   scale_fill_discrete(labels = c("No effect", "Effect")) +
-  #theme(legend.position = "none") +
-  theme(legend.position='top',
-        legend.justification='left',
-        legend.direction='vertical')# +
-#  annotate(geom="text", x=1, y=1.16, label="(e)",size=6)
+  theme(legend.position = "none") +
+  annotate(geom="text", x=1, y=1.45, label="(d)",size=6)
 
 p4
-ggsave("figures/density_tipbias.png",
-       width = 15,
-       height = 10,
-       units = 'cm')
-
 
 #number of measurements
-length(na.omit(df2$tip_bias))
+length(na.omit(df3$tip_bias))
 
 #number of markers
 options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[5]))
@@ -241,19 +212,12 @@ p5 <-
   ggplot(df2, aes(no_markers, fill = div_inc, colour = div_inc)) +
   geom_density(alpha = 0.5, color = NA) +
   scale_x_continuous(name = "Total number of markers",  trans = "log10") +
-  scale_y_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0),limits = c(0,2)) +
   scale_fill_discrete(labels = c("No effect", "Effect")) +
-  #theme(legend.position = "none") +
-  theme(legend.position='top',
-        legend.justification='left',
-        legend.direction='vertical')# +
-  #annotate(geom="text", x=1, y=1.575, label="(c)",size=6)
+  theme(legend.position = "none") +
+  annotate(geom="text", x=1, y=1.9, label="(c)",size=6)
 
 p5
-ggsave("figures/density_markers.png",
-       width = 15,
-       height = 10,
-       units = 'cm')
 
 #number of measurements
 length(na.omit(df2$no_markers))
@@ -262,9 +226,18 @@ length(na.omit(df2$no_markers))
 #arrange plots together
 ###
 
-p1 | p2 / p3 | p5 / p4
+p1 | p2 / p4 | p5 / p3
 
 ggsave("figures/densities_all.png",
        width = 30,
        height = 20,
        units = 'cm')
+
+#pdf for publication
+ggsave("figures/densities_all.pdf",
+       width = 30,
+       height = 20,
+       units = 'cm')
+
+#undo theme
+theme_set(theme_bw())

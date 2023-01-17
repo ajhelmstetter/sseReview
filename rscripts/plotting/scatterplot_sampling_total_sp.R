@@ -64,6 +64,9 @@ df <- df %>%
   group_by(study, model_no) %>%
   dplyr::slice(which.max(div_inc))
 
+#remove rows with NA
+df<-na.omit(df)
+
 #lm of trait-dependent results
 summary(lm(log(tips/perc_sampling) ~ asin(sqrt(perc_sampling)), data = df[df$div_inc == 1, ]))
 
@@ -79,7 +82,7 @@ options(ggplot2.discrete.colour = c("#999999", brewer.pal(5,"Set2")[3]))
 
 #tip number / sampling fraction = total number of taxa in clade of interest
 #sampling fraction vs tip number
-ggplot(df, aes(x = tips/(perc_sampling), y = asin(sqrt(perc_sampling)), color = as.factor(div_inc), shape = as.factor(div_inc))) +
+ggplot(df, aes(x = (tips/(perc_sampling)), y = asin(sqrt(perc_sampling)), color = as.factor(div_inc), shape = as.factor(div_inc))) +
   geom_point(alpha = 0.8, size = 2.5) +
   geom_smooth(method = lm, linetype = "dashed", aes(fill = as.factor(div_inc))) +
   scale_x_continuous(name = "Total number of species in study group", trans='log10') +

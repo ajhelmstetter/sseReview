@@ -26,15 +26,7 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 
-Research Compendium of the paper **Trait-dependent diversification in angiosperms: patterns, models and data*
-
-
-### How to cite
-
-Please cite this compendium as: 
-
-> **{{ PLEASE ADD A CITATION }}**
-
+Research Compendium of the paper: Trait-dependent diversification in angiosperms: patterns, models and data
 
 ### Content
 
@@ -51,12 +43,6 @@ contains all the results created during the workflow
 
 - [`figures/`](https://github.com/ajhelmstetter/sseReview/tree/master/figures):
 contains all the figures created during the workflow
-
-- [`paper/`](https://github.com/ajhelmstetter/sseReview/tree/master/paper):
-contains all the manuscript and related content (biblio, templates, etc.)
-
-- [`R/`](https://github.com/ajhelmstetter/sseReview/tree/master/R):
-contains R functions developed especially for this project
 
 - [`man/`](https://github.com/ajhelmstetter/sseReview/tree/master/man):
 contains help files of R functions

@@ -66,24 +66,29 @@ df <-
 #only those rows with div rate values (not NA)
 df<-df[!is.na(df$div_rate),]
 
-#make new df with MuSSE only (MuHiSSE only has two states with div rates)
-df_muss<-df[df$sse_model=="MuSSE",]
+#remove combination from df
+df<-df[df$trait_level_2!="Combination",]
 
-#get max div rate in MuSSE model
+#make new df with MuSSE and MuHiSSE only
+df_muss<-df[df$sse_model=="MuSSE" | df$sse_model=="MuHiSSE",]
+df_muss
+
+#get max div rate in multistate models
 max_muss<-df_muss %>% group_by(study,model_no) %>% slice_max(n = 1,
                                                  order_by = div_rate,
                                                  with_ties = F)
 
-#get min div rate in MuSSE model
+#get min div rate in multistate models
 min_muss<-df_muss %>% group_by(study,model_no) %>% slice_min(n = 1,
                                                              order_by = div_rate,
                                                              with_ties = F)
 
-#combine min and max rates so only extremes per MuSSE model
+#combine min and max rates so only extremes per multistate model
 df_muss_minmax<-rbind(data.frame(max_muss),data.frame(min_muss))
 
-#remove MuSSE studies from df
+#remove MuSSE and MuHiSSE studies from df
 df<-df[df$sse_model!="MuSSE",]
+df<-df[df$sse_model!="MuHiSSE",]
 
 #add reduced MuSSE rows with min and max values only
 df<-rbind(df,df_muss_minmax)
@@ -183,12 +188,18 @@ colnames(df2)<-c("study","trait_level_1","trait_level_2","div_ratio")
 df2$trait_level_1<-as.factor(df2$trait_level_1)
 df2$trait_level_2<-as.factor(df2$trait_level_2)
 
+#number of models
+df_no_na<-na.omit(df2)
+length(df_no_na$div_ratio)
+length(unique(df_no_na$study))
+
+
 #####
 # Stats trait level 1
 #####
 
 # Compute the analysis of variance
-res.aov <- aov(div_ratio ~ trait_level_1, data = df2)
+res.aov <- aov(div_ratio ~ trait_level_1, data = na.omit(df2))
 
 # Summary of the analysis
 summary(res.aov)
@@ -252,7 +263,7 @@ p1 <- ggplot(df3, aes(
 #####
 
 # Compute the analysis of variance
-res.aov <- aov(div_ratio ~ trait_level_2, data = df2)
+res.aov <- aov(div_ratio ~ trait_level_2, data = na.omit(df2))
 
 # Summary of the analysis
 summary(res.aov)
@@ -281,14 +292,13 @@ pairwise.wilcox.test(df2$div_ratio, df2$trait_level_2,
 #####
 
 df4 <-df2 %>% mutate(trait_level_2 = fct_relevel(trait_level_2,
-                                        "Reproduction",
                                         "Biogeography",
-                                        "Symbiosis",
-                                        "Pollination",
+                                        "Reproduction",
                                         "Vegetative",
+                                        "Pollination",
+                                        "Symbiosis",
                                         "Dispersal",
                                         "Habitat",
-                                        "Combination",
                                         "Genome"
 ))
 
@@ -331,3 +341,10 @@ ggsave("figures/violins_reldiffs_both_pos.png",
 
 #how many models used?
 table(is.na(rats$as.numeric.rat_val.))[1]
+table(is.na(df3$div_ratio))[1]
+table(is.na(df4$div_ratio))[1]
+
+#how many studies?
+str(na.omit(df3))
+df5<-na.omit(df3)
+length(unique(df5$study))

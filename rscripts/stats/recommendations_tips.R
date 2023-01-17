@@ -46,6 +46,8 @@ df2$davis[as.numeric(as.character(df2$year))<2014]<-1
 df2$davis<-as.factor(df2$davis)
 
 #make frequency table according to Davis et al. thresholds
+
+#post
 freq<-vector()
 freq[1]<-sum(df2[df2$davis==2,]$tips>=500)
 freq[2]<-sum(df2[df2$davis==2,]$tips<500 & df2[df2$davis==2,]$tips>=300)
@@ -53,6 +55,8 @@ freq[3]<-sum(df2[df2$davis==2,]$tips<300 & df2[df2$davis==2,]$tips>=100)
 freq[4]<-sum(df2[df2$davis==2,]$tips<100 & df2[df2$davis==2,]$tips>=50)
 freq[5]<-sum(df2[df2$davis==2,]$tips<50)
 
+
+#pre
 freq[6]<-sum(df2[df2$davis==1,]$tips>=500)
 freq[7]<-sum(df2[df2$davis==1,]$tips<500 & df2[df2$davis==1,]$tips>=300)
 freq[8]<-sum(df2[df2$davis==1,]$tips<300 & df2[df2$davis==1,]$tips>=100)

@@ -4,7 +4,6 @@
 
 rm(list = ls())
 
-library(xgboost)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
@@ -25,7 +24,7 @@ df <-
 
 #make sure factors are factors
 df$sse_model <- as.factor(df$sse_model)
-df2$div_inc <- as.factor(df2$div_inc)
+df$div_inc <- as.factor(df$div_inc)
 
 #histogram of global sampling fraction
 hist(df$perc_sampling)
@@ -48,23 +47,26 @@ df2$year_threshold<-as.factor(df2$year_threshold)
 df2<-na.omit(df2)
 
 #number models with sampling fraction > 25% pre-2010
-sum(df2$perc_sampling[df2$year_threshold==1]>25)
+sum(df2$perc_sampling[df2$year_threshold==1]>=25)
 
 #number models pre-2010
 length(df2$perc_sampling[df2$year_threshold==1])
 
-#Pre-2010 sampling fraction means
-sum(df2$perc_sampling[df2$year_threshold==1]>25) / length(df2$perc_sampling[df2$year_threshold==1])
+#Pre-2010 sampling fraction
+sum(df2$perc_sampling[df2$year_threshold==1]>=25) / length(df2$perc_sampling[df2$year_threshold==1])
 
-#number models with sampling fraction > 25% post 2009
-sum(df2$perc_sampling[df2$year_threshold==2]>25)
+#number models with sampling fraction >= 25% post 2009
+sum(df2$perc_sampling[df2$year_threshold==2]>=25)
 
 #number models post 2009
 length(df2$perc_sampling[df2$year_threshold==2])
 
-#Post-2009 sampling fraction means
-sum(df2$perc_sampling[df2$year_threshold==2]>25) / length(df2$perc_sampling[df2$year_threshold==2])
+#Post-2009 sampling fraction
+sum(df2$perc_sampling[df2$year_threshold==2]>=25) / length(df2$perc_sampling[df2$year_threshold==2])
 
+#overall
+#total models with sampling fraction info
+length(df2$perc_sampling)
 
-
-
+#sampling fraction >=25 across all studies
+sum(df2$perc_sampling>=25) / length(df2$perc_sampling)

@@ -62,7 +62,7 @@ options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[3]))
 #plot
 l2<-ggplot(df2, aes(fill=div_inc, y=count, x=reorder(trait_level_2, -count))) +
   geom_bar(position="stack", stat="identity",alpha=0.85) +
-  scale_x_discrete(name ="Trait category") +
+  scale_x_discrete(name ="Trait level 2 category") +
   scale_y_continuous(expand = c(0, 0),
                      limits = c(0,30),
                      name ="Number of times tested") +
@@ -105,7 +105,7 @@ options(ggplot2.discrete.fill = c("#999999", brewer.pal(5,"Set2")[4]))
 ##
 l4<-ggplot(df2, aes(fill=div_inc, y=count, x=reorder(trait_level_4, -count))) +
   geom_bar(position="stack", stat="identity",alpha=0.85) +
-  scale_x_discrete(name ="Trait category") +
+  scale_x_discrete(name ="Trait level 4 category") +
   scale_y_continuous(expand = c(0, 0),
                      limits=c(0,25),
                      name ="Number of times tested") +

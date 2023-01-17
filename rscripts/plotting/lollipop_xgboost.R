@@ -1,11 +1,11 @@
-rm(list = ls())
+#rm(list = ls())
 
 library(xgboost)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
 
-load("outputs/xgboost.Rdata")
+load("outputs/xgboost_2.Rdata")
 
 #combine importance tables
 for (i in 1:length(imps)) {
@@ -15,6 +15,8 @@ for (i in 1:length(imps)) {
     imps_df <- rbind(imps_df, imps[[i]])
   }
 }
+
+imps_df
 
 #aggregate based on feature
 imps_agg <-
@@ -47,6 +49,52 @@ lim <- c(0, max(imps_agg$Gain_mean) + (max(imps_agg$Gain_mean) / 5))
 theme_set(theme_bw())
 library(feathers)
 options(ggplot2.discrete.colour = get_pal(names(feathers_palettes)[4])[c(1:3, 5, 6)])
+
+#cleanup variable names
+imps_agg$Feature<-gsub("trait_level_1","",imps_agg$Feature)
+imps_agg$Feature<-gsub("trait_level_2","",imps_agg$Feature)
+imps_agg$Feature<-gsub("trait_level_3","",imps_agg$Feature)
+imps_agg$Feature<-gsub("trait_level_4","",imps_agg$Feature)
+imps_agg$Feature<-gsub("level","",imps_agg$Feature)
+imps_agg$Feature<-gsub("year","",imps_agg$Feature)
+imps_agg$Feature<-gsub("order","",imps_agg$Feature)
+imps_agg$Feature<-gsub("sse_model","",imps_agg$Feature)
+imps_agg$Feature[1:20]
+
+#quantitative
+imps_agg$Feature<-gsub("perc_sampling","Sampling fraction",imps_agg$Feature)
+imps_agg$Feature<-gsub("tips","No. tips",imps_agg$Feature)
+imps_agg$Feature<-gsub("tip_bias","Tip bias",imps_agg$Feature)
+imps_agg$Feature<-gsub("age","Age",imps_agg$Feature)
+imps_agg$Feature<-gsub("no_markers","No. markers",imps_agg$Feature)
+
+#categorical
+imps_agg$Feature<-gsub("BiSSE","Model (BiSSE)",imps_agg$Feature)
+imps_agg$Feature<-gsub("QuaSSE","Model (QuaSSE)",imps_agg$Feature)
+imps_agg$Feature<-gsub("HiSSE","Model (HiSSE)",imps_agg$Feature)
+imps_agg$Feature<-gsub("GeoSSE","Model (GeoSSE)",imps_agg$Feature)
+imps_agg$Feature<-gsub("FiSSE","Model (FiSSE)",imps_agg$Feature)
+imps_agg$Feature<-gsub("MuSSE","Model (MuSSE)",imps_agg$Feature)
+
+imps_agg$Feature<-gsub("Subfamily","Level (Subfamily)",imps_agg$Feature)
+imps_agg$Feature<-gsub("Genus","Level (Genus)",imps_agg$Feature)
+imps_agg$Feature<-gsub("Tribe","Level (Tribe)",imps_agg$Feature)
+
+imps_agg$Feature<-gsub("2011","Year (2011)",imps_agg$Feature)
+imps_agg$Feature<-gsub("2014","Year (2014)",imps_agg$Feature)
+imps_agg$Feature<-gsub("2020","Year (2020)",imps_agg$Feature)
+
+imps_agg$Feature<-gsub("Intrinsic","Trait (Intrinsic)",imps_agg$Feature)
+imps_agg$Feature<-gsub("Habitat","Trait (Habitat)",imps_agg$Feature)
+imps_agg$Feature<-gsub("GeographicRange","Trait (Geographic range)",imps_agg$Feature)
+imps_agg$Feature<-gsub("FruitMorpho","Trait (Fruit morphology)",imps_agg$Feature)
+imps_agg$Feature<-gsub("Biogeography","Trait (Biogeography)",imps_agg$Feature)
+imps_agg$Feature<-gsub("Vegetative","Trait (Vegetative)",imps_agg$Feature)
+imps_agg$Feature<-gsub("Soil","Trait (Soil)",imps_agg$Feature)
+imps_agg$Feature<-gsub("Pre_mating","Trait (Pre-mating)",imps_agg$Feature)
+imps_agg$Feature<-gsub("Post_mating","Trait (Post-mating)",imps_agg$Feature)
+
+imps_agg$Feature<-gsub("Poales","Order (Poales)",imps_agg$Feature)
 
 #TOP 20
 #lollipop plot
@@ -93,17 +141,25 @@ p <-
     panel.grid.major.x = element_line(colour = "grey"),
     panel.grid.major.y = element_blank(),
     panel.background = element_rect(fill = "white"),
-    legend.position = c(0.85, 0.1),
+    legend.position = c(0.8, 0.15),
     legend.background = element_rect(fill = "white", colour = "grey")
   ) +
   xlab("Variable") +
-  ylab("Gain mean")
+  ylab("Gain")
 
 p
 
 #save
 ggsave(
   "figures/lollipop_xgboost.png",
+  width = 25,
+  height = 15,
+  units = 'cm'
+)
+
+#pdf for publication
+ggsave(
+  "figures/lollipop_xgboost.pdf",
   width = 25,
   height = 15,
   units = 'cm'

@@ -51,14 +51,17 @@ df <-
     'tips'
   )]
 
-#make div_inc values > 1 (multistate models) = 1
-df$div_inc[df$div_inc>1]<-1
-table(df$div_inc)
-
 #reduce to a single binary result per model per study
 df <- df %>%
   group_by(study, model_no) %>%
   dplyr::slice(which.max(div_inc))
+
+#make div_inc values > 1 (multistate models) = 1
+df$div_inc[df$div_inc>1]<-1
+table(df$div_inc)
+
+#remove rows with NA
+df<-na.omit(df)
 
 #lm of trait-dependent results
 summary(lm(log(tips) ~ asin(sqrt(perc_sampling)), data = df[df$div_inc == 1, ]))

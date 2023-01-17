@@ -80,8 +80,7 @@ theme_set(my_theme)
 options(ggplot2.discrete.fill = c("#999999", brewer.pal(5, "Set2")[2]))
 options(ggplot2.discrete.colour = c("#999999", brewer.pal(5, "Set2")[2]))
 
-#tip number / sampling fraction = total number of taxa in clade of interest
-#sampling fraction vs tip number
+#root age vs tip number
 ggplot(df, aes(
   x = tips,
   y = age,

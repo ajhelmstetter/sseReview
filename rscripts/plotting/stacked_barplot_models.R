@@ -108,3 +108,10 @@ ggsave(
   units = 'cm'
 )
 
+#pdf for publication
+ggsave(
+  "figures/stacked_barplot_models.pdf",
+  width = 24,
+  height = 16,
+  units = 'cm'
+)

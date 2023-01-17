@@ -30,7 +30,7 @@ df <-
 #    'clade',
     'trait_level_1',
     'trait_level_2',
-#    'trait_level_3',
+    'trait_level_3',
     'trait_level_4',
 #    'trait_level_5',
 #    'trait_level_6',
@@ -43,38 +43,35 @@ df <-
 #    'no_mito',
 #    'no_nuclear',
     'perc_sampling',
+#    'sampling_per_state' #varies among states
     'samples_per_state',
-    'putative_ancestral_state',
+#    'putative_ancestral_state', #varies among states
     'div_inc'
   )]
 
 
 ###
-# Data transformations
+# Data preparation
 ###
 
 ###
 # Make samples per state into tip bias
 ###
 
-#make column with combination of study and model (make sure they are rows 1 and 2)
-tmp_df <- df %>% tidyr::unite("study_model", 1:2, remove = T)
-
-#reduce dataset to two columns
-tmp_df <- tmp_df[, c("study_model", "samples_per_state")]
-
-head(tmp_df)
-
 #get max and min values of samples per state for each model
 top_df <-
-  tmp_df %>% group_by(study_model) %>% slice_max(n = 1,
-                                                 order_by = samples_per_state,
-                                                 with_ties = F)
-bot_df <-
-  tmp_df %>% group_by(study_model) %>% slice_min(n = 1,
+  df %>% group_by(study, model_no) %>% slice_max(n = 1,
                                                  order_by = samples_per_state,
                                                  with_ties = F)
 
+head(top_df)
+
+bot_df <-
+  df %>% group_by(study, model_no) %>% slice_min(n = 1,
+                                                 order_by = samples_per_state,
+                                                 with_ties = F)
+
+head(bot_df)
 
 #reduce to a single binary result per model per study
 df3 <- df %>%
@@ -91,57 +88,69 @@ df3$div_inc <- as.factor(df3$div_inc)
 #multi-state models are therefore largest tip bias possible in the data
 df3$tip_bias <- top_df$samples_per_state / bot_df$samples_per_state
 
+#check that orders of df2 and top/bot_df match up
+top_df$study==bot_df$study
+top_df$model_no==bot_df$model_no
+
+df3$model_no==bot_df$model_no
+df3$model_no==top_df$model_no
+
+df3$study==bot_df$study
+df3$study==top_df$study
+
 #get rid of inf tip bias value
-df3<-df3[!is.infinite(df3$tip_bias),]
+df3$tip_bias[is.infinite(df3$tip_bias)] <- NA
 
 #convert back to df
 df <- as.data.frame(df3)
 
+# Scaling and normalization are not needed https://github.com/dmlc/xgboost/issues/357
 # NUMBER OF MARKERS
 #log no_markers as long tail
-hist(df$no_markers)
-df$no_markers <- log(df$no_markers)
-hist(df$no_markers)
+#hist(df$no_markers)
+#df$no_markers <- log(df$no_markers)
+#hist(df$no_markers)
 
 #NUMBER OF TIPS
 #log tips as long tail
-hist(df$tips)
-df$tips <- log(df$tips)
-hist(df$tips)
+#hist(df$tips)
+#df$tips <- log(df$tips)
+#hist(df$tips)
 
 #AGE OF TREE
 #log age as long tail
 #still strange
-hist(df$age)
-df$age <- log(df$age)
-hist(df$age)
+#hist(df$age)
+#df$age <- log(df$age)
+#hist(df$age)
 
 #GLOBAL SAMPLING FRACTION
-hist(df$perc_sampling)
+#hist(df$perc_sampling)
 #arcsine
-df$perc_sampling <- asin(sqrt(df$perc_sampling))
-hist(df$perc_sampling)
-
-#SAMPLES PER STATE
-#change to numeric prior to transformation, remove NAs
-df$samples_per_state <- as.numeric(df$samples_per_state)
+#df$perc_sampling <- asin(sqrt(df$perc_sampling))
+#hist(df$perc_sampling)
 
 #make sure factors are factors
 df$order <- as.factor(df$order)
 df$sse_model <- as.factor(df$sse_model)
 df$year <- as.factor(df$year)
-df$putative_ancestral_state <- as.factor(df$putative_ancestral_state)
+
+#convert characters to factors
+as.factor(df)
+
+df<-lapply(df,function(x){
+  if(is.character(x)){x=as.factor(x)}else{x}
+})
+
+df<-as.data.frame(df)
+
+str(df)
 
 #remove study and model no (first two rows)
-#sampling per state and putative ancestral state vary among rows in models- should remove as well.
+#samples per state varies among rows in models- should remove as well.
 df <- df[, -which(colnames(df) %in% c('study',
                                       'model_no',
-                                      'samples_per_state',
-                                      'putative_ancestral_state'))]
-
-#remove quasse for div_inc
-#may need to remove others too
-#df <- df[df$sse_model != "QuaSSE", ]
+                                      'samples_per_state'))]
 
 ####
 # Check correlation of continuous vars
@@ -158,24 +167,11 @@ df_cor <-
 
 cor(df_cor, use = "complete.obs")
 
-#scale the data
-#for (i in 1:length(df[1, ])) {
-#  if (is.numeric(df[, i])) {
-#    df[, i] <- scale(df[, i])
-#  }
-#}
-
-#change all NA to 0 and make data.table format
+#make data.table format
 library(data.table)
 df <- data.table(df, keep.rownames = FALSE)
-#df[is.na(df)] <- 0
 head(df)
 str(df)
-
-#can include ordinal vars
-#ordinal variable : can take a limited number of values (like factor) ;
-#these values are ordered (unlike factor). Here these ordered values are: Marked > Some > None
-#GOOD FOR MUSSE?
 
 #One-hot encoding
 #Next step, we will transform the categorical data to dummy variables. This is the one-hot encoding step.
@@ -192,13 +188,15 @@ options(na.action='na.pass')
 #The -1 is here to remove the first column which is full of 1 (this column is generated by the conversion).
 
 #create sparse matrix
-sparse_matrix <- sparse.model.matrix(div_inc ~ . - 1, data = df,verbose=T)
+#keep reference levels for factors > 2 levels
+#ensure that 1:8 are the factors
+sparse_matrix <- sparse.model.matrix(div_inc ~ . -1 , data = df,verbose=T,
+contrasts.arg = lapply(df[,1:8], contrasts, contrasts=FALSE ))
+
 colnames(sparse_matrix)<-gsub("-","_",colnames(sparse_matrix))
 str(sparse_matrix)
 nrow(sparse_matrix)
-
-#reset NA option
-options(na.action='na.omit')
+colnames(sparse_matrix)
 
 ###
 # Run an analysis
@@ -213,9 +211,6 @@ n = nrow(sparse_matrix)
 #training percentage
 tp <- 0.8
 
-#number of iterations
-x <- 1
-
 #get indices of training rows
 train.index = sample(n, floor(tp * n))
 #subset training data
@@ -223,29 +218,28 @@ train.data = as.matrix(sparse_matrix[train.index,])
 #labels (results) of training data
 train.label = label[train.index]
 #make DMatrix for train
-dtrain <- xgb.DMatrix(data = train.data, label=train.label)
+dtrain <- xgb.DMatrix(data = train.data, label=train.label,missing=NA)
 
 #get test data (whole dataset without training data)
 test.data = as.matrix(sparse_matrix[-train.index,])
 #labels (results) of test data
 test.label = label[-train.index]
 #make DMatrix for test
-dtest <- xgb.DMatrix(data = test.data, label=test.label)
+dtest <- xgb.DMatrix(data = test.data, label=test.label,missing=NA)
 
 #run model
 xgb.fit <-
   xgboost(
     booster = 'gbtree',
     data = dtrain,
-    #label = train.label,
     max.depth = 3, #maximum depth of a tree
     eta = 0.0001, #the learning rate: scale the contribution of each tree
     #gamma = 0, #minimum loss reduction required to make a further partition on a leaf node of the tree
-    nthread = 2,
-    nrounds = 10000, #max number of boosting iterations
+    nthread = 1,
+    nrounds = 20000, #max number of boosting iterations
     eval_metric = 'error',
     eval_metric = 'logloss',
-    early_stopping_rounds = 5, #training with a validation set will stop if the performance doesn't improve for k rounds
+    early_stopping_rounds = 20, #training with a validation set will stop if the performance doesn't improve for k rounds
     objective = "binary:logistic",
     print_every_n = 1000
   )
@@ -265,6 +259,9 @@ table(xgb.pred, test.label)
 #prediction accuracy
 mean(xgb.pred == test.label)
 
+#confusion matrix
+confusionMatrix (as.factor(xgb.pred), as.factor(test.label))
+
 #store importances
 imps <-
   xgb.importance(feature_names = sparse_matrix@Dimnames[[2]],
@@ -282,42 +279,20 @@ imps <-
 #examine results
 head(imps)
 
-##
-# test vs train error
-##
-
-watchlist <- list(train = dtrain, test = dtest)
-
-bst <-
-  xgb.train(
-    data = dtrain,
-    max.depth = 3,
-    eta = 0.0001, #if this is higher then there are large differences between test/train error
-    nthread = 2,
-    nrounds = 10000,
-    eval_metric = 'error',
-    eval_metric = 'logloss',
-    watchlist = watchlist,
-    objective = "binary:logistic",
-    print_every_n = 1000
-  )
-
 ###
 # Cross validation
 ###
 
 #Using the inbuilt xgb.cv function, let's calculate the best nround for this model. In addition, this function also returns CV error, which is an estimate of test error.
-
 xgbcv <-
   xgb.cv(
     data = dtrain,
-    max.depth = 3,
+    max.depth = 8,
     eta = 0.001,
-    nthread = 2,
-    nrounds = 10000,
+    nthread = 1,
+    nrounds = 20000,
     eval_metric = 'error',
     eval_metric = 'logloss',
-    watchlist = watchlist,
     objective = "binary:logistic",
     print_every_n = 1000,
     early_stopping_rounds = 20,
@@ -328,45 +303,33 @@ xgbcv <-
   )
 
 #cross validation error
-xgbcv
-
-#first default - model training
-xgb1 <-
-  xgb.train (
-    data = dtrain,
-    max.depth = 3,
-    eta = 0.001,
-    nthread = 2,
-    nrounds = xgbcv$best_iteration,
-    watchlist = list(val = dtest, train = dtrain),
-    print_every_n = 1000,
-    maximize = F ,
-    eval_metric = "error"
-  )
-
-#model prediction
-xgbpred <- predict (xgb1, dtest)
-xgbpred <- ifelse (xgbpred > 0.5, 1, 0)
-xgbpred
-
-#confusion matrix
-confusionMatrix (as.factor(xgbpred), as.factor(test.label))
+print(xgbcv)
 
 #####
 # Parameter tuning
 #####
 
 #need to start with sparse matrix otherwise col names different between test and train sets
-#convert to data frame for functions
+#convert to data frame for functions, fix names
 sparse_matrix<-as.data.frame(as.matrix(sparse_matrix))
-colnames(sparse_matrix)<-gsub("-","_",colnames(sparse_matrix))
-colnames(sparse_matrix)<-gsub(" ","_",colnames(sparse_matrix))
+colnames(sparse_matrix)<-gsub("-","_",colnames(sparse_matrix))#seems redundant now
+colnames(sparse_matrix)<-gsub(" ","_",colnames(sparse_matrix))#seems redundant now
 colnames(sparse_matrix)
+
+#check order is correct
+sparse_matrix$perc_sampling==df$perc_sampling
+sparse_matrix$age_inferred==df$age_inferred
 
 #add div_inc column and rename
 sparse_matrix<-cbind(sparse_matrix,df$div_inc)
 colnames(sparse_matrix)[length(colnames(sparse_matrix))]<-"div_inc"
 colnames(sparse_matrix)
+
+#number of rows in entire matrix
+n = nrow(sparse_matrix)
+
+#training percentage
+tp <- 0.8
 
 #index
 train.index = sample(n, floor(tp * n))
@@ -375,19 +338,21 @@ train.data = sparse_matrix[train.index,]
 #get test data (whole dataset without training data)
 test.data = sparse_matrix[-train.index,]
 
+#no longer needed
 #convert characters to factors
-fact_col <- colnames(train.data)[sapply(train.data,is.character)]
-
-for(i in fact_col) set(train.data,j=i,value = factor(train.data[[i]]))
-for (i in fact_col) set(test.data,j=i,value = factor(test.data[[i]]))
+#fact_col <- colnames(train.data)[sapply(train.data,is.character)]
+#for(i in fact_col) set(train.data,j=i,value = factor(train.data[[i]]))
+#for(i in fact_col) set(test.data,j=i,value = factor(test.data[[i]]))
 
 #create tasks
-traintask <- makeClassifTask (data = train.data, target = "div_inc")
-testtask <- makeClassifTask (data = test.data, target = "div_inc")
+traintask <- makeClassifTask (data = train.data, target = "div_inc", positive = '1')
+traintask
+testtask <- makeClassifTask (data = test.data, target = "div_inc", positive = '1')
 
+#already done
 #do one hot encoding
-traintask <- createDummyFeatures (obj = traintask)
-testtask <- createDummyFeatures (obj = testtask)
+#traintask <- createDummyFeatures (obj = traintask)
+#testtask <- createDummyFeatures (obj = testtask)
 
 #create learner
 lrn <- makeLearner("classif.xgboost", predict.type = "response")
@@ -395,8 +360,8 @@ lrn$par.vals <-
   list(
     objective = "binary:logistic",
     eval_metric = "logloss",
-    nrounds = 10000L,
-    early_stopping_rounds = 10,
+    nrounds = 20000L,
+    early_stopping_rounds = 20,
     print_every_n = 1000
   )
 
@@ -414,10 +379,10 @@ params <-
 #set resampling strategy
 rdesc <- makeResampleDesc("CV",
                           stratify = T, #ensure that distribution of target class is maintained in the resampled data sets.
-                          iters = 10L)
+                          iters = 20L)
 
 #search strategy
-ctrl <- makeTuneControlRandom(maxit = 30L) #random search to find the best parameters. maxit = number of models
+ctrl <- makeTuneControlRandom(maxit = 40L) #random search to find the best parameters. maxit = number of models
 
 #parameter tuning
 mytune <-
@@ -445,15 +410,20 @@ xgpred <- predict(xgmodel,testtask)
 confusionMatrix(xgpred$data$response,xgpred$data$truth)
 
 ###
-# Resampling training and test datasets
+# Resampling training and test datasets for cross validation
 ###
 
 #remake sparse matrix
 #allow NA values
-options(na.action='na.pass')
-sparse_matrix <- sparse.model.matrix(div_inc ~ . - 1, data = df,verbose=T)
+#keep reference levels for factors > 2 levels
+#ensure that 1:8 are the factors
+sparse_matrix <- sparse.model.matrix(div_inc ~ . -1 , data = df,verbose=T,
+                                     contrasts.arg = lapply(df[,1:8], contrasts, contrasts=FALSE ))
+
 colnames(sparse_matrix)<-gsub("-","_",colnames(sparse_matrix))
-options(na.action='na.omit')
+str(sparse_matrix)
+nrow(sparse_matrix)
+colnames(sparse_matrix)
 
 #set label
 label <- as.numeric(df$div_inc)-1
@@ -470,10 +440,7 @@ xg_dist <- vector()
 #empty list to store importances
 imps <- list()
 
-#number of iterations
-x <- 1
-
-#loop to run sampling x times
+#loop to run sampling 500 times
 for (i in 1:500) {
 
   print(paste("Iteration :", i))
@@ -485,14 +452,14 @@ for (i in 1:500) {
   #labels (results) of training data
   train.label = label[train.index]
   #make DMatrix for train
-  dtrain <- xgb.DMatrix(data = train.data, label=train.label)
+  dtrain <- xgb.DMatrix(data = train.data, label=train.label, missing=NA)
 
   #get test data (whole dataset without training data)
   test.data = as.matrix(sparse_matrix[-train.index,])
   #labels (results) of test data
   test.label = label[-train.index]
   #make DMatrix for test
-  dtest <- xgb.DMatrix(data = test.data, label=test.label)
+  dtest <- xgb.DMatrix(data = test.data, label=test.label, missing=NA)
 
   #run model
   xgb.fit <-
@@ -506,15 +473,15 @@ for (i in 1:500) {
       subsample = lrn_tune$par.vals$subsample,
       colsample_bytree = lrn_tune$par.vals$colsample_bytree,
       nthread = 2,
-      nrounds = 10000,
+      nrounds = 20000,
       eval_metric = 'error',
       eval_metric = 'logloss',
-      early_stopping_rounds = 5,
+      early_stopping_rounds = 20,
       objective = "binary:logistic",
       print_every_n = 1000
     )
 
-  # Review the final model and results
+  # Review the model and results
   #xgb.fit
 
   # Predict outcomes with the test data
@@ -524,7 +491,7 @@ for (i in 1:500) {
   xgb.pred <- ifelse(xgb.probs > 0.5, 1, 0)
 
   #Calculate the final accuracy
-  table(xgb.pred, test.label)
+  confusionMatrix (as.factor(xgb.pred), as.factor(test.label))
 
   #store prediction accuracy
   xg_dist[i] <- mean(xgb.pred == test.label)
@@ -556,7 +523,13 @@ p
 
 #mean value
 mean(xg_dist$xg_dist)
+min(xg_dist$xg_dist)
+max(xg_dist$xg_dist)
 
+#set theme
+theme_set(theme_bw())
+
+#uncomment to save histogram
 ggsave("figures/hist_xgboost_accuracy.png")
 
 #https://www.kaggle.com/rtatman/machine-learning-with-xgboost-in-r
@@ -570,7 +543,10 @@ xgb.plot.multi.trees(feature_names = sparse_matrix@Dimnames[[2]],
 #ggsave("figures/xgboost_tree.png")
 
 #save image
-save.image("outputs/xgboost.Rdata")
+#save.image("outputs/xgboost_3.Rdata")
 
 #load for replotting
-#load("outputs/xgboost.Rdata")
+#load("outputs/xgboost_2.Rdata")
+
+options(na.action='na.omit')
+
